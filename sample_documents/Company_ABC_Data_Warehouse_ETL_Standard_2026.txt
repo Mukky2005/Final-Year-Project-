@@ -1,0 +1,13 @@
+Company ABC - Analytics Datamart & ETL Operational Standards 2026
+Document Owner: Enterprise Data Strategy Group
+Target Audience: Business Analysts & Data Stewards
+
+1. Metric Standardization (SSOT)
+All cross-functional business metrics including Net Recurring Revenue (NRR), Monthly Active Users (MAU), and Customer Acquisition Cost (CAC) must be sourced strictly from the certified Gold-tier Snowflake datamarts. Ad-hoc calculations in client spreadsheets are prohibited for board reporting.
+
+2. Data Freshness SLA
+Financial analytics models must be refreshed daily by 05:00 UTC. Operational marketing campaign datamarts must be refreshed hourly during core business operations.
+
+3. Schema Drift Protocols
+Any schema changes affecting upstream ingestion tables require a minimum 7-day notification window submitted via Jira to the Data Governance Board.
+

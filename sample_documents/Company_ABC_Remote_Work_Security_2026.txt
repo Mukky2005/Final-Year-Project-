@@ -1,0 +1,13 @@
+Company ABC - Remote Work & VPN Security Guidelines 2026
+Document Owner: Information Security & Infrastructure Team
+Target Audience: Tech Employees & Engineering Staff
+
+1. Zero Trust Network Access (ZTNA)
+All remote engineering staff connecting to company development clusters must use the WireGuard corporate VPN with certificate-based client authentication. Split-tunneling is strictly disabled for any connection routing to production AWS/GCP VPCs.
+
+2. Ephemeral Credentials
+API access tokens and cloud console access must use AWS IAM Identity Center or Google Cloud Workload Identity Federation with a maximum session lifetime of 8 hours. Hardcoding credentials in configuration files or shell histories is a critical security violation.
+
+3. Device Health Verification
+Before establishing a session to the staging or production Bastion hosts, endpoint compliance agents will verify that OS patches are less than 14 days old and that endpoint detection and response (EDR) agents are active.
+

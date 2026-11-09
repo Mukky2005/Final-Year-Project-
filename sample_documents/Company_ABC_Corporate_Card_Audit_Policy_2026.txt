@@ -1,0 +1,13 @@
+Company ABC - Corporate Credit Card & Procurement Audit Standards 2026
+Document Owner: Corporate Finance & Treasury
+Target Audience: Finance Employees & Accounting Staff
+
+1. Purchasing Thresholds
+Corporate credit cards are issued to department leads with a default single-transaction limit of $2,500. Any purchase exceeding $2,500 requires pre-authorization through the NetSuite procurement module with approval from the Vice President of Finance.
+
+2. Software Subscription Audits
+All SaaS recurring software subscriptions must undergo quarterly usage reviews. Licenses that have remained inactive for greater than 45 days will be automatically flagged for decommissioning during the month-end accounting close.
+
+3. Tax and VAT Compliance
+Itemized VAT and sales tax invoices must be attached to every expense report. Missing tax documentation will result in a 14-day hold on subsequent reimbursement disbursements.
+

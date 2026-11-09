@@ -1,0 +1,22 @@
+# Secrets and environment files
+*.env*
+*.pem
+*.key
+*.secret
+# Docker compose with secrets
+docker-compose.yml
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+*.log
+
+# OS / IDE files
+.DS_Store
+.vscode/
+
