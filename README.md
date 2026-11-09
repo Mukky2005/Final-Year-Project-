@@ -116,3 +116,4 @@ All 12 acceptance criteria pass:
 - **MVP-11**: Document deletion invalidates all associated vector embeddings
 - **MVP-12**: Multi-tenant isolation test: Company ABC cannot retrieve Company XYZ documents
 
+# Final-Year-Project-
