@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class LLMService:
     def __init__(self):
         self.ollama_chat_url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/chat"
+        self.fallback_ollama_url = "http://host.docker.internal:11434/api/chat" if "ollama:" in settings.OLLAMA_BASE_URL else None
         self.model = settings.CHAT_MODEL
 
     def generate_grounded_answer(
@@ -53,31 +54,36 @@ class LLMService:
             "Please provide a clear, accurate answer based strictly on the authorized evidence above:"
         )
 
-        # Call Ollama /api/chat
-        try:
-            resp = requests.post(
-                self.ollama_chat_url,
-                json={
-                    "model": self.model,
-                    "messages": [
-                        {"role": "system", "content": system_instruction},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    "stream": False,
-                    "options": {
-                        "temperature": 0.1,  # Low temperature for factual precision
-                        "top_p": 0.9
-                    }
-                },
-                timeout=30
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                msg = data.get("message", {}).get("content", "").strip()
-                if msg:
-                    return msg
-        except Exception as e:
-            logger.warning(f"Ollama chat generation failed or timed out: {e}")
+        # Call Ollama /api/chat with automatic fallback across docker/host endpoints
+        urls_to_try = [self.ollama_chat_url]
+        if self.fallback_ollama_url and self.fallback_ollama_url not in urls_to_try:
+            urls_to_try.append(self.fallback_ollama_url)
+
+        for url in urls_to_try:
+            try:
+                resp = requests.post(
+                    url,
+                    json={
+                        "model": self.model,
+                        "messages": [
+                            {"role": "system", "content": system_instruction},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        "stream": False,
+                        "options": {
+                            "temperature": 0.1,  # Low temperature for factual precision
+                            "top_p": 0.9
+                        }
+                    },
+                    timeout=30
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    msg = data.get("message", {}).get("content", "").strip()
+                    if msg:
+                        return msg
+            except Exception as e:
+                logger.warning(f"Ollama chat generation failed on {url}: {e}")
 
         # Grounded extraction fallback (in case Ollama server is busy or cold-starting)
         logger.info("Executing grounded context synthesis fallback.")

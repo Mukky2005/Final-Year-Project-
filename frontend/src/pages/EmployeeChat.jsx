@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useRouter } from '../context/RouterContext';
 import {
   Send,
   MessageSquare,
@@ -17,11 +18,13 @@ import {
   Building2,
   Lock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react';
 
 export default function EmployeeChat() {
   const { currentUser } = useAuth();
+  const { navigate } = useRouter();
   const [conversations, setConversations] = useState([]);
   const [activeConvId, setActiveConvId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -212,9 +215,39 @@ export default function EmployeeChat() {
     }
   };
 
+  const isCompanyABC = currentUser?.tenant_name?.includes('ABC');
+  const isCompanyXYZ = currentUser?.tenant_name?.includes('XYZ');
+  const parentCompanyEndpoint = isCompanyABC ? '/demo/company-abc' : isCompanyXYZ ? '/demo/company-xyz' : '/demo';
+  const parentCompanyLabel = isCompanyABC ? 'Company ABC' : isCompanyXYZ ? 'Company XYZ' : 'Demo Lab';
+
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-140px)] min-h-[640px]">
+    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100 space-y-4">
+      {/* Top Breadcrumb Navigation */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-3">
+        <div className="flex items-center gap-2 font-mono text-xs">
+          <button
+            onClick={() => navigate(parentCompanyEndpoint)}
+            className="inline-flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>← Back to {parentCompanyLabel} Directory</span>
+          </button>
+          <span className="text-neutral-700">/</span>
+          <span className="text-white font-bold">{currentUser?.full_name || 'Role Chat'}</span>
+          <span className="text-[10px] text-neutral-500 uppercase px-2 py-0.5 border border-neutral-800 bg-neutral-950 font-mono">
+            {currentUser?.role_name}
+          </span>
+        </div>
+
+        <div className="font-mono text-[10px] text-neutral-500 flex items-center gap-2">
+          <span>ENDPOINT:</span>
+          <code className="text-neutral-300 font-bold bg-neutral-950 border border-neutral-800 px-2 py-0.5">
+            {window.location.pathname}
+          </code>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-190px)] min-h-[600px]">
         
         {/* Left Sidebar: Active Role, Actions, and Isolated History */}
         <div className="lg:col-span-1 bg-neutral-950 border border-neutral-800 p-5 rounded-none flex flex-col justify-between">
@@ -323,8 +356,8 @@ export default function EmployeeChat() {
           <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-black">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto space-y-5 py-6">
-                <div className="w-14 h-14 bg-white border border-white flex items-center justify-center p-1.5 rounded-none shadow-md">
-                  <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-contain" />
+                <div className="w-14 h-14 bg-white border border-white flex items-center justify-center rounded-none shadow-md overflow-hidden">
+                  <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="space-y-1">
@@ -342,7 +375,7 @@ export default function EmployeeChat() {
                 {/* Suggestions tailored to this persona */}
                 <div className="w-full space-y-2 pt-2">
                   <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block text-left">
-                    DEMO PROMPT SUITE ({currentUser?.role_name}):
+                    RECOMMENDED DEMO PROMPTS ({currentUser?.role_name}):
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
                     {getPromptSuggestions().map((s, idx) => {
@@ -350,7 +383,7 @@ export default function EmployeeChat() {
                       return (
                         <div
                           key={idx}
-                          className="btn-waxy-black p-3 text-left transition-colors border border-neutral-800 hover:border-neutral-700 flex flex-col justify-between group"
+                          className="btn-waxy-black p-3.5 text-left border border-neutral-800 hover:border-neutral-600 flex flex-col justify-between group interactive-card cursor-pointer"
                         >
                           <div>
                             <div className="flex items-center justify-between mb-1">
@@ -396,8 +429,8 @@ export default function EmployeeChat() {
                 return (
                   <div key={msg.message_id || index} className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
                     {!isUser && (
-                      <div className="w-8 h-8 rounded-none bg-white p-0.5 flex items-center justify-center shrink-0 mt-1 border border-white">
-                        <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-contain" />
+                      <div className="w-8 h-8 rounded-none bg-white flex items-center justify-center shrink-0 mt-1 border border-white overflow-hidden">
+                        <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-cover" />
                       </div>
                     )}
 

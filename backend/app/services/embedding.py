@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class EmbeddingService:
     def __init__(self):
-        self.ollama_url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/embed"
-        self.fallback_ollama_url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/embeddings"
+        self.base_url = settings.OLLAMA_BASE_URL.rstrip('/')
+        self.fallback_base_url = "http://host.docker.internal:11434" if "ollama:" in settings.OLLAMA_BASE_URL else None
         self.model = settings.EMBEDDING_MODEL
         self.dimension = settings.EMBEDDING_DIMENSION
 
@@ -24,46 +24,50 @@ class EmbeddingService:
         if not texts:
             return []
 
-        # Attempt Ollama /api/embed (newer Ollama API)
-        try:
-            resp = requests.post(
-                self.ollama_url,
-                json={"model": self.model, "input": texts},
-                timeout=15
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                if "embeddings" in data and len(data["embeddings"]) == len(texts):
-                    # Check dimension
-                    emb_list = data["embeddings"]
-                    return [self._normalize(e) for e in emb_list]
-        except Exception as e:
-            logger.warning(f"Ollama /api/embed failed: {e}. Trying legacy /api/embeddings...")
+        base_urls = [self.base_url]
+        if self.fallback_base_url and self.fallback_base_url not in base_urls:
+            base_urls.append(self.fallback_base_url)
 
-        # Attempt Ollama /api/embeddings (legacy single input)
-        results = []
-        ollama_failed = False
-        for text in texts:
+        for base in base_urls:
+            # Attempt Ollama /api/embed (newer Ollama API)
             try:
                 resp = requests.post(
-                    self.fallback_ollama_url,
-                    json={"model": self.model, "prompt": text},
-                    timeout=10
+                    f"{base}/api/embed",
+                    json={"model": self.model, "input": texts},
+                    timeout=15
                 )
                 if resp.status_code == 200:
                     data = resp.json()
-                    if "embedding" in data:
-                        results.append(self._normalize(data["embedding"]))
-                        continue
-                ollama_failed = True
-                break
+                    if "embeddings" in data and len(data["embeddings"]) == len(texts):
+                        emb_list = data["embeddings"]
+                        return [self._normalize(e) for e in emb_list]
             except Exception as e:
-                logger.warning(f"Ollama legacy embedding failed: {e}")
-                ollama_failed = True
-                break
+                logger.warning(f"Ollama /api/embed failed on {base}: {e}. Trying legacy /api/embeddings...")
 
-        if not ollama_failed and len(results) == len(texts):
-            return results
+            # Attempt Ollama /api/embeddings (legacy single input)
+            results = []
+            ollama_failed = False
+            for text in texts:
+                try:
+                    resp = requests.post(
+                        f"{base}/api/embeddings",
+                        json={"model": self.model, "prompt": text},
+                        timeout=10
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        if "embedding" in data:
+                            results.append(self._normalize(data["embedding"]))
+                            continue
+                    ollama_failed = True
+                    break
+                except Exception as e:
+                    logger.warning(f"Ollama legacy embedding failed on {base}: {e}")
+                    ollama_failed = True
+                    break
+
+            if not ollama_failed and len(results) == len(texts):
+                return results
 
         # High quality deterministic semantic-hash fallback vector
         # (normalized 768-dim float vector)

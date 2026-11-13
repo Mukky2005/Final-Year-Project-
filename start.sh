@@ -5,16 +5,8 @@ echo "=========================================================="
 echo " Starting TRUSTRA: AI that knows what you are allowed to know "
 echo "=========================================================="
 
-# Check if Ollama is running on host
-if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
-    echo "✓ Ollama is running on host (localhost:11434)"
-else
-    echo "⚠️ Warning: Ollama does not seem to be running on localhost:11434."
-    echo "  Please run 'ollama serve' if you wish to use real local LLM generation."
-fi
-
-echo "Starting Docker Compose services (db, backend, frontend)..."
-docker compose up -d
+echo "Starting all Docker Compose services (ollama, db, backend, frontend)..."
+docker compose up -d --build
 
 echo ""
 echo "Waiting for services to become ready..."
@@ -30,6 +22,7 @@ echo " Service Endpoints:"
 echo " - Web Application: http://localhost:3000"
 echo " - API Documentation: http://localhost:8000/docs"
 echo " - PostgreSQL Vector DB: localhost:5432"
+echo " - Ollama Agent Container: tenant_ollama (http://ollama:11434)"
 echo ""
 echo " Demo Logins (password: password123):"
 echo " [Company ABC]"
@@ -43,4 +36,3 @@ echo " - Quantum Tech:       tech@companyxyz.com"
 echo " - SecOps Analyst:     secops@companyxyz.com"
 echo " - Compliance Lead:    compliance@companyxyz.com"
 echo "=========================================================="
-

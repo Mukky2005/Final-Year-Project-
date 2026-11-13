@@ -24,12 +24,13 @@ body {
   color: #ffffff;
   border: 1px solid #27272a;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-waxy-black:hover {
   background: #18181b;
-  border-color: #3f3f46;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: #52525b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .btn-waxy-white {
@@ -37,11 +38,62 @@ body {
   color: #09090b;
   border: 1px solid #000000;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-waxy-white:hover {
   background: #f4f4f5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px rgba(255, 255, 255, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Tactile interactive card lift-up on hover */
+.interactive-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  will-change: transform;
+}
+.interactive-card:hover {
+  transform: translateY(-4px);
+  border-color: #52525b;
+  box-shadow: 0 12px 28px -8px rgba(255, 255, 255, 0.07), 0 4px 8px -2px rgba(255, 255, 255, 0.03);
+}
+
+/* Subtle micro-lift for smaller elements (stats, pills, badges) */
+.interactive-chip {
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+.interactive-chip:hover {
+  transform: translateY(-2px);
+  border-color: #71717a;
+}
+
+/* Smooth tab entrance animation */
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-tab-fade {
+  animation: tabFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Pulsing circuit flow animation for architecture pipeline */
+@keyframes pulseFlow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-flow {
+  animation: pulseFlow 2.4s ease-in-out infinite;
 }
 
 /* Custom crisp scrollbar */

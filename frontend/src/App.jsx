@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { RouterProvider, useRouter } from './context/RouterContext';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
+import DemoPage from './pages/DemoPage';
 import AdminDashboard from './pages/AdminDashboard';
 import EmployeeChat from './pages/EmployeeChat';
 import AuditLogsPage from './pages/AuditLogsPage';
-import SecuritySuitePage from './pages/SecuritySuitePage';
 
 function MainApp() {
-  const { currentUser, isAuthenticated } = useAuth();
-  const [activeTab, setActiveTab] = useState('landing');
+  const { currentUser, loading: authLoading } = useAuth();
+  const { activeTab, setActiveTab } = useRouter();
 
-  // If user signs in, route them appropriately if they are on landing
   const renderContent = () => {
     switch (activeTab) {
       case 'landing':
         return <LandingPage setActiveTab={setActiveTab} />;
+      case 'demo':
+        return <DemoPage setActiveTab={setActiveTab} />;
       case 'chat':
         return <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
       case 'admin':
-        return currentUser?.is_admin ? <AdminDashboard /> : <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
+        // If auth is still resolving or user is an admin, render AdminDashboard
+        if (currentUser?.is_admin || authLoading) {
+          return <AdminDashboard />;
+        }
+        return <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
       case 'audit':
-        return currentUser?.is_admin ? <AuditLogsPage /> : <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
-      case 'suite':
-        return <SecuritySuitePage />;
+        if (currentUser?.is_admin || authLoading) {
+          return <AuditLogsPage />;
+        }
+        return <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
       default:
         return <LandingPage setActiveTab={setActiveTab} />;
     }
@@ -32,7 +39,11 @@ function MainApp() {
   return (
     <div className="min-h-screen bg-black text-neutral-100 flex flex-col selection:bg-white selection:text-black">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className="flex-1 bg-black">{renderContent()}</main>
+      <main className="flex-1 bg-black">
+        <div key={activeTab} className="animate-tab-fade">
+          {renderContent()}
+        </div>
+      </main>
     </div>
   );
 }
@@ -40,8 +51,9 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <RouterProvider>
+        <MainApp />
+      </RouterProvider>
     </AuthProvider>
   );
 }
-

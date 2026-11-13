@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useRouter, getUserSlug } from '../context/RouterContext';
 import { 
   ShieldCheck, 
   Building2, 
@@ -8,21 +9,28 @@ import {
   MessageSquare, 
   SlidersHorizontal, 
   History, 
-  CheckCircle2, 
   LogOut,
   Sparkles,
-  Lock
+  Lock,
+  BookOpen,
+  FlaskConical
 } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab }) {
   const { currentUser, demoUsers, switchUser, logout, isAuthenticated } = useAuth();
+  const { navigate } = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const isOnLanding = activeTab === 'landing';
+  const isPublicPage = activeTab === 'landing' || activeTab === 'demo';
 
   const handleSelectPersona = async (userId) => {
+    const user = demoUsers.find(u => u.user_id === userId);
     await switchUser(userId);
-    // Every demo persona switch opens their dedicated chat directly
-    setActiveTab('chat');
+    // Every demo persona switch opens their dedicated chat endpoint directly
+    if (user) {
+      navigate(`/chat/${getUserSlug(user)}`);
+    } else {
+      navigate('/chat');
+    }
     setDropdownOpen(false);
   };
 
@@ -33,101 +41,118 @@ export default function Navbar({ activeTab, setActiveTab }) {
           {/* Logo & Platform Name */}
           <div 
             className="flex items-center space-x-3 cursor-pointer group" 
-            onClick={() => setActiveTab('landing')}
+            onClick={() => navigate('/')}
           >
-            <div className="w-10 h-10 rounded-none bg-white border border-white flex items-center justify-center p-1 transition-transform group-hover:scale-95 shadow-sm">
+            <div className="w-10 h-10 rounded-none bg-white border border-white flex items-center justify-center overflow-hidden transition-transform group-hover:scale-95 shadow-sm">
               <img 
                 src="/trustra-logo.png" 
                 alt="TRUSTRA Logo" 
-                className="w-full h-full object-contain" 
+                className="w-full h-full object-cover" 
               />
             </div>
             <div>
-              <div className="text-sm font-black text-white tracking-widest uppercase flex items-center gap-2">
+              <div className="text-sm font-black text-white tracking-widest uppercase">
                 <span>TRUSTRA</span>
-                <span className="text-[9px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 bg-neutral-900 text-neutral-300 border border-neutral-700">
-                  SECURE RAG
-                </span>
               </div>
               <p className="text-[11px] text-neutral-400 font-mono tracking-tight">AI that knows what you are allowed to know.</p>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          {isAuthenticated && (
-            <nav className="hidden md:flex items-center space-x-1 font-mono text-xs">
-              <button
-                onClick={() => setActiveTab('chat')}
-                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
-                  activeTab === 'chat'
-                    ? 'bg-white text-black border-white font-bold shadow-sm'
-                    : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
-                }`}
-              >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>ROLE CHAT</span>
-              </button>
+          <nav className="hidden md:flex items-center space-x-1 font-mono text-xs">
+            <button
+              onClick={() => navigate('/')}
+              className={`relative flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
+                activeTab === 'landing'
+                  ? 'bg-white text-black border-white font-bold shadow-sm'
+                  : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>ABOUT TRUSTRA</span>
+            </button>
 
-              {currentUser?.is_admin && (
-                <>
-                  <button
-                    onClick={() => setActiveTab('admin')}
-                    className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
-                      activeTab === 'admin'
-                        ? 'bg-white text-black border-white font-bold shadow-sm'
-                        : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
-                    }`}
-                  >
-                    <SlidersHorizontal className="w-3.5 h-3.5" />
-                    <span>ADMIN WORKSPACE</span>
-                  </button>
+            <button
+              onClick={() => navigate('/demo')}
+              className={`relative flex items-center space-x-2 px-3.5 py-2 rounded-none transition-all border ${
+                activeTab === 'demo'
+                  ? 'bg-white text-black border-white font-bold shadow-sm'
+                  : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+              <FlaskConical className="w-3.5 h-3.5" />
+              <span>DEMO LAB</span>
+            </button>
 
-                  <button
-                    onClick={() => setActiveTab('audit')}
-                    className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
-                      activeTab === 'audit'
-                        ? 'bg-white text-black border-white font-bold shadow-sm'
-                        : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
-                    }`}
-                  >
-                    <History className="w-3.5 h-3.5" />
-                    <span>AUDIT LOGS</span>
-                  </button>
-                </>
-              )}
+            {isAuthenticated && (
+              <>
+                <button
+                  onClick={() => navigate(currentUser ? `/chat/${getUserSlug(currentUser)}` : '/chat')}
+                  className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
+                    activeTab === 'chat'
+                      ? 'bg-white text-black border-white font-bold shadow-sm'
+                      : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
+                  }`}
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>ROLE CHAT</span>
+                </button>
 
-              <button
-                onClick={() => setActiveTab('suite')}
-                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
-                  activeTab === 'suite'
-                    ? 'bg-white text-black border-white font-bold shadow-sm'
-                    : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>MVP SUITE (12/12)</span>
-              </button>
-            </nav>
-          )}
+                {currentUser?.is_admin && (
+                  <>
+                    <button
+                      onClick={() => navigate('/admin')}
+                      className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
+                        activeTab === 'admin'
+                          ? 'bg-white text-black border-white font-bold shadow-sm'
+                          : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
+                      }`}
+                    >
+                      <SlidersHorizontal className="w-3.5 h-3.5" />
+                      <span>ADMIN WORKSPACE</span>
+                    </button>
+
+                    <button
+                      onClick={() => navigate('/audit')}
+                      className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all border ${
+                        activeTab === 'audit'
+                          ? 'bg-white text-black border-white font-bold shadow-sm'
+                          : 'bg-transparent text-neutral-400 border-transparent hover:text-white hover:border-neutral-800'
+                      }`}
+                    >
+                      <History className="w-3.5 h-3.5" />
+                      <span>AUDIT LOGS</span>
+                    </button>
+                  </>
+                )}
+              </>
+            )}
+          </nav>
 
           {/* Right Header */}
           <div className="flex items-center space-x-3">
-            {/* On landing page: always show clean CTA buttons — no company/role shown */}
-            {isOnLanding ? (
+            {/* On public pages: clean CTA buttons — no company/role dropdown shown */}
+            {isPublicPage ? (
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    if (demoUsers.length > 0) {
-                      switchUser(demoUsers[0].user_id).then(() => setActiveTab('chat'));
-                    }
-                  }}
-                  className="px-5 py-2 bg-white text-black text-xs font-mono font-black uppercase tracking-wider border border-white hover:bg-neutral-100 transition-colors"
-                >
-                  Start Demo
-                </button>
+                {activeTab === 'landing' ? (
+                  <button
+                    onClick={() => navigate('/demo')}
+                    className="px-4 py-2 bg-white text-black text-xs font-mono font-black uppercase tracking-wider border border-white hover:bg-neutral-100 transition-colors"
+                  >
+                    Get Demo
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate('/')}
+                    className="px-4 py-2 bg-transparent text-neutral-300 text-xs font-mono uppercase tracking-wider border border-neutral-700 hover:text-white hover:border-neutral-500 transition-colors"
+                  >
+                    Product Overview
+                  </button>
+                )}
                 {isAuthenticated && (
                   <button
-                    onClick={() => setActiveTab('chat')}
+                    onClick={() => navigate(currentUser ? `/chat/${getUserSlug(currentUser)}` : '/chat')}
                     className="px-4 py-2 bg-transparent text-neutral-400 text-xs font-mono uppercase tracking-wider border border-neutral-700 hover:text-white hover:border-neutral-500 transition-colors"
                   >
                     Open Chat
@@ -210,7 +235,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
                     <div className="border-t border-neutral-800 px-3 pt-2.5 pb-1 flex justify-between bg-neutral-900/40">
                       <button
                         onClick={() => {
-                          setActiveTab('landing');
+                          navigate('/');
                           setDropdownOpen(false);
                         }}
                         className="text-xs text-neutral-300 hover:text-white font-mono flex items-center gap-1"
@@ -221,7 +246,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
                       <button
                         onClick={() => {
                           logout();
-                          setActiveTab('landing');
+                          navigate('/');
                           setDropdownOpen(false);
                         }}
                         className="text-xs text-neutral-400 hover:text-white font-mono flex items-center gap-1"
@@ -236,7 +261,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
             ) : (
               <button
                 onClick={() => {
-                  setActiveTab('landing');
+                  navigate('/demo');
                 }}
                 className="px-4 py-2 bg-white text-black text-xs font-mono font-black uppercase tracking-wider hover:bg-neutral-200 transition-colors"
               >

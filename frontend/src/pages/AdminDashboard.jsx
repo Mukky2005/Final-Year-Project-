@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useRouter } from '../context/RouterContext';
 import {
   UploadCloud,
   FileText,
@@ -15,11 +16,13 @@ import {
   FileCheck,
   Search,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  ArrowLeft
 } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { currentUser } = useAuth();
+  const { navigate } = useRouter();
   const [tenant, setTenant] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -206,9 +209,36 @@ export default function AdminDashboard() {
     );
   }
 
+  const isCompanyABC = tenant?.tenant_name?.includes('ABC') || currentUser?.tenant_name?.includes('ABC');
+  const isCompanyXYZ = tenant?.tenant_name?.includes('XYZ') || currentUser?.tenant_name?.includes('XYZ');
+  const parentCompanyEndpoint = isCompanyABC ? '/demo/company-abc' : isCompanyXYZ ? '/demo/company-xyz' : '/demo';
+  const parentCompanyLabel = isCompanyABC ? 'Company ABC' : isCompanyXYZ ? 'Company XYZ' : 'Demo Lab';
+
   return (
     <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 text-neutral-100 font-sans">
       
+      {/* Top Breadcrumb Navigation */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-3">
+        <div className="flex items-center gap-2 font-mono text-xs">
+          <button
+            onClick={() => navigate(parentCompanyEndpoint)}
+            className="inline-flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>← Back to {parentCompanyLabel} Directory ({parentCompanyEndpoint})</span>
+          </button>
+          <span className="text-neutral-700">/</span>
+          <span className="text-white font-bold">{tenant?.tenant_name || 'Tenant'} Administration Console</span>
+        </div>
+
+        <div className="font-mono text-[10px] text-neutral-500 flex items-center gap-2">
+          <span>ENDPOINT:</span>
+          <code className="text-neutral-300 font-bold bg-neutral-950 border border-neutral-800 px-2 py-0.5">
+            {window.location.pathname}
+          </code>
+        </div>
+      </div>
+
       {/* Header & Stats Banner */}
       <div className="bg-neutral-950 rounded-none p-6 sm:p-8 border border-neutral-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
