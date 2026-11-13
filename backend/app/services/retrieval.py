@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any, Tuple
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_, func, select, cast, Text
+from sqlalchemy import or_, and_, func, cast
 from sqlalchemy.dialects.postgresql import JSONB
 from app.models import DocumentChunk, Document, User, Role
 from app.services.embedding import embedding_service

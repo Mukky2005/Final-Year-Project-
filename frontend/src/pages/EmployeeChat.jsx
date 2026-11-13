@@ -11,14 +11,10 @@ import {
   Sparkles,
   BookOpen,
   Trash2,
-  ExternalLink,
   Info,
-  Clock,
   Layers,
   Building2,
   Lock,
-  CheckCircle2,
-  AlertCircle,
   ArrowLeft
 } from 'lucide-react';
 

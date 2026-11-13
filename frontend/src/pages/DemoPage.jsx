@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useRouter, getUserSlug, getUserEndpoint } from '../context/RouterContext';
+import { useRouter, getUserEndpoint } from '../context/RouterContext';
 import { 
   ShieldCheck, 
   Lock, 
@@ -8,16 +8,9 @@ import {
   Users, 
   ArrowRight, 
   ArrowLeft,
-  Compass, 
   Layers, 
-  AlertTriangle,
-  CheckCircle2, 
-  Sparkles,
-  Terminal,
   FileText,
-  Key,
   ShieldAlert,
-  Bot,
   Info,
   Code2,
   Coins,
@@ -26,7 +19,7 @@ import {
   Cpu
 } from 'lucide-react';
 
-export default function DemoPage({ setActiveTab }) {
+export default function DemoPage() {
   const { demoUsers, switchUser, currentUser } = useAuth();
   const { navigate, tenantFilter } = useRouter();
   const [selectedTenantFilter, setSelectedTenantFilter] = useState(tenantFilter || 'ALL');
@@ -52,17 +45,6 @@ export default function DemoPage({ setActiveTab }) {
       navigate(targetEndpoint);
     } else if (user) {
       navigate(getUserEndpoint(user));
-    } else {
-      navigate('/demo');
-    }
-  };
-
-  const handleFilterChange = (filter) => {
-    setSelectedTenantFilter(filter);
-    if (filter === 'ABC') {
-      navigate('/demo/company-abc');
-    } else if (filter === 'XYZ') {
-      navigate('/demo/company-xyz');
     } else {
       navigate('/demo');
     }

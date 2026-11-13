@@ -111,8 +111,5 @@ export const api = {
 
   // Audit
   getAuditEvents: (limit = 50) => apiRequest(`/audit/events?limit=${limit}`),
-
-  // Test Suite
-  runTestSuite: () => apiRequest('/tests/run-suite'),
 };
 

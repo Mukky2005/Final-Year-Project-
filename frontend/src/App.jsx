@@ -15,9 +15,9 @@ function MainApp() {
   const renderContent = () => {
     switch (activeTab) {
       case 'landing':
-        return <LandingPage setActiveTab={setActiveTab} />;
+        return <LandingPage />;
       case 'demo':
-        return <DemoPage setActiveTab={setActiveTab} />;
+        return <DemoPage />;
       case 'chat':
         return <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
       case 'admin':
@@ -32,13 +32,13 @@ function MainApp() {
         }
         return <EmployeeChat key={currentUser?.user_id || 'anonymous'} />;
       default:
-        return <LandingPage setActiveTab={setActiveTab} />;
+        return <LandingPage />;
     }
   };
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 flex flex-col selection:bg-white selection:text-black">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar activeTab={activeTab} />
       <main className="flex-1 bg-black">
         <div key={activeTab} className="animate-tab-fade">
           {renderContent()}

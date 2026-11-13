@@ -6,7 +6,7 @@ from app.config import settings
 from app.database import init_db, get_db
 from app.seed import seed_database
 from app.routers import auth, tenants, roles, employees, documents, chat, audit
-from app.models import Tenant, User, Role, Document, DocumentChunk
+from app.models import Tenant, User, Role, Document
 from app.services.retrieval import retrieval_service
 
 logging.basicConfig(level=logging.INFO)

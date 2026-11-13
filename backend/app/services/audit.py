@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
-from app.models import AuditEvent, User
+from app.models import AuditEvent
 
 logger = logging.getLogger(__name__)
 

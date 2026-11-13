@@ -76,11 +76,6 @@ class TenantResponse(BaseModel):
         from_attributes = True
 
 # Document schemas
-class DocumentAccessInfo(BaseModel):
-    role_id: Optional[str] = None
-    role_name: Optional[str] = None
-    visibility_scope: str
-
 class DocumentResponse(BaseModel):
     document_id: str
     tenant_id: str

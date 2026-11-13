@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import { useRouter } from '../context/RouterContext';
 import {
   UploadCloud,
-  FileText,
   Users,
   Shield,
   Trash2,
@@ -16,7 +15,6 @@ import {
   FileCheck,
   Search,
   Sparkles,
-  ArrowRight,
   ArrowLeft
 } from 'lucide-react';
 

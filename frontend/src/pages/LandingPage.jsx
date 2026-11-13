@@ -8,12 +8,10 @@ import {
   Cpu,
   ArrowRight,
   Building2,
-  Sparkles,
   Database,
   ShieldAlert,
   Terminal,
   Key,
-  Compass,
   Zap,
   Bot,
   FlaskConical,
@@ -21,12 +19,10 @@ import {
   Network,
   GitBranch,
   FileCheck2,
-  CheckCircle2,
-  Fingerprint,
-  FileText
+  Fingerprint
 } from 'lucide-react';
 
-export default function LandingPage({ setActiveTab }) {
+export default function LandingPage() {
   const { navigate } = useRouter();
   const [activeFeature, setActiveFeature] = useState(0);
 
@@ -62,8 +58,7 @@ export default function LandingPage({ setActiveTab }) {
               className="w-full h-full object-cover"
             />
           </div>
-          <h1 cl
-            assName="text-6xl sm:text-8xl font-black text-white tracking-tighter uppercase leading-none font-sans">
+          <h1 className="text-6xl sm:text-8xl font-black text-white tracking-tighter uppercase leading-none font-sans">
             TRUSTRA
           </h1>
           <div className="inline-block border border-neutral-700 bg-black px-5 py-2">

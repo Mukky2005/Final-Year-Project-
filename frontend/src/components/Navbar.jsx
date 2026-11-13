@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter, getUserSlug } from '../context/RouterContext';
 import { 
-  ShieldCheck, 
   Building2, 
-  UserCheck, 
   ChevronDown, 
   MessageSquare, 
   SlidersHorizontal, 
   History, 
   LogOut,
   Sparkles,
-  Lock,
   BookOpen,
   FlaskConical
 } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab }) {
+export default function Navbar({ activeTab }) {
   const { currentUser, demoUsers, switchUser, logout, isAuthenticated } = useAuth();
   const { navigate } = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);

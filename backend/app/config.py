@@ -1,7 +1,8 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
     PROJECT_NAME: str = "Tenant-Isolated Enterprise Knowledge Assistant"
     VERSION: str = "1.0.0"
     DATABASE_URL: str = os.getenv(
@@ -17,10 +18,6 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "enterprise_secret_jwt_key_super_secure_mvp_2026")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
-
-    class Config:
-        env_file = ".env"
-        extra = "allow"
 
 settings = Settings()
 

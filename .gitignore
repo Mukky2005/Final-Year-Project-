@@ -3,12 +3,16 @@
 *.pem
 *.key
 *.secret
-# Docker compose with secrets
-docker-compose.yml
 
 # Python artifacts
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+venv/
+.venv/
+backend/venv/
 
 # Node / frontend
 node_modules/

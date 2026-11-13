@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { 
-  ShieldCheck, 
   ShieldAlert, 
   History, 
   RefreshCw, 
-  Filter, 
-  CheckCircle2, 
-  XCircle,
-  Clock,
-  User,
-  Building2
+  CheckCircle2
 } from 'lucide-react';
 
 export default function AuditLogsPage() {
