@@ -37,9 +37,9 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-neutral-100 flex flex-col selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-white text-black flex flex-col selection:bg-black selection:text-white">
       <Navbar activeTab={activeTab} />
-      <main className="flex-1 bg-black">
+      <main className="flex-1 bg-white">
         <div key={activeTab} className="animate-tab-fade">
           {renderContent()}
         </div>

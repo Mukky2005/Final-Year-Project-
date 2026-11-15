@@ -217,27 +217,27 @@ export default function EmployeeChat() {
   const parentCompanyLabel = isCompanyABC ? 'Company ABC' : isCompanyXYZ ? 'Company XYZ' : 'Demo Lab';
 
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-neutral-100 space-y-4">
+    <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-black bg-white space-y-4">
       {/* Top Breadcrumb Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black pb-3">
         <div className="flex items-center gap-2 font-mono text-xs">
           <button
             onClick={() => navigate(parentCompanyEndpoint)}
-            className="inline-flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 text-black font-bold hover:underline transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>← Back to {parentCompanyLabel} Directory</span>
           </button>
-          <span className="text-neutral-700">/</span>
-          <span className="text-white font-bold">{currentUser?.full_name || 'Role Chat'}</span>
-          <span className="text-[10px] text-neutral-500 uppercase px-2 py-0.5 border border-neutral-800 bg-neutral-950 font-mono">
+          <span className="text-black font-bold">/</span>
+          <span className="text-black font-black uppercase">{currentUser?.full_name || 'Role Chat'}</span>
+          <span className="text-[10px] text-black font-bold uppercase px-2 py-0.5 border border-black bg-neutral-100 font-mono">
             {currentUser?.role_name}
           </span>
         </div>
 
-        <div className="font-mono text-[10px] text-neutral-500 flex items-center gap-2">
-          <span>ENDPOINT:</span>
-          <code className="text-neutral-300 font-bold bg-neutral-950 border border-neutral-800 px-2 py-0.5">
+        <div className="font-mono text-[10px] text-neutral-600 flex items-center gap-2">
+          <span className="font-bold">ENDPOINT:</span>
+          <code className="text-black font-black bg-neutral-100 border border-black px-2 py-0.5">
             {window.location.pathname}
           </code>
         </div>
@@ -246,36 +246,36 @@ export default function EmployeeChat() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-190px)] min-h-[600px]">
         
         {/* Left Sidebar: Active Role, Actions, and Isolated History */}
-        <div className="lg:col-span-1 bg-neutral-950 border border-neutral-800 p-5 rounded-none flex flex-col justify-between">
+        <div className="lg:col-span-1 bg-neutral-50 border-2 border-black p-5 rounded-none flex flex-col justify-between shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-block-pop">
           <div className="space-y-4">
             
             {/* Active Persona Banner */}
-            <div className="p-4 border border-neutral-700 bg-black space-y-2">
+            <div className="p-4 border-2 border-black bg-white space-y-2 text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-600 font-bold">
                   ACTIVE PERSONA
                 </span>
-                <span className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-black bg-white px-1.5 py-0.5 font-bold">
+                <span className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest text-white bg-black px-1.5 py-0.5 font-bold">
                   <Lock className="w-2.5 h-2.5" />
                   <span>ISOLATED</span>
                 </span>
               </div>
               
               <div>
-                <div className="text-sm font-bold text-white tracking-tight">{currentUser?.full_name}</div>
-                <div className="text-xs font-mono text-neutral-300 font-medium">{currentUser?.role_name}</div>
+                <div className="text-sm font-black text-black tracking-tight uppercase">{currentUser?.full_name}</div>
+                <div className="text-xs font-mono text-neutral-700 font-bold">{currentUser?.role_name}</div>
               </div>
 
-              <div className="text-[11px] font-mono text-neutral-400 flex items-center gap-1.5 pt-1 border-t border-neutral-900">
-                <Building2 className="w-3.5 h-3.5 text-neutral-400" />
-                <span className="font-semibold text-neutral-300">{currentUser?.tenant_name}</span>
+              <div className="text-[11px] font-mono text-neutral-600 flex items-center gap-1.5 pt-1 border-t border-neutral-300">
+                <Building2 className="w-3.5 h-3.5 text-black" />
+                <span className="font-bold text-black">{currentUser?.tenant_name}</span>
               </div>
             </div>
 
             {/* New Conversation Button */}
             <button
               onClick={handleNewChat}
-              className="w-full btn-waxy-white py-2.5 px-4 rounded-none font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
+              className="w-full btn-waxy-black py-2.5 px-4 rounded-none font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
             >
               <MessageSquare className="w-3.5 h-3.5" />
               <span>NEW CHAT SESSION</span>
@@ -284,14 +284,14 @@ export default function EmployeeChat() {
             {/* Conversation History (User-Scoped Only) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">
+                <span className="text-[10px] font-mono font-bold text-black uppercase tracking-widest">
                   ROLE CHAT THREADS ({conversations.length})
                 </span>
               </div>
               
               <div className="space-y-1 max-h-[300px] overflow-y-auto pr-1">
                 {conversations.length === 0 ? (
-                  <div className="p-4 text-center text-xs font-mono text-neutral-500 bg-black border border-neutral-800">
+                  <div className="p-4 text-center text-xs font-mono text-neutral-500 bg-white border-2 border-dashed border-neutral-300">
                     No previous chats in this role thread.
                   </div>
                 ) : (
@@ -301,16 +301,16 @@ export default function EmployeeChat() {
                       <div
                         key={conv.conversation_id}
                         onClick={() => selectConversation(conv.conversation_id)}
-                        className={`p-3 rounded-none text-xs cursor-pointer flex items-center justify-between group transition-all border ${
+                        className={`p-3 rounded-none text-xs cursor-pointer flex items-center justify-between group transition-all border-2 text-block-pop ${
                           isActive
-                            ? 'bg-neutral-800 text-white font-bold border-white'
-                            : 'bg-black text-neutral-400 border-neutral-800 hover:border-neutral-700 hover:text-neutral-200'
+                            ? 'bg-black text-white font-bold border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                            : 'bg-white text-black border-black hover:bg-neutral-100 font-medium'
                         }`}
                       >
                         <span className="truncate pr-2 font-mono text-[11px]">{conv.title}</span>
                         <button
                           onClick={(e) => handleDeleteConversation(e, conv.conversation_id)}
-                          className="opacity-0 group-hover:opacity-100 p-1 text-neutral-400 hover:text-white transition-opacity"
+                          className="opacity-0 group-hover:opacity-100 p-1 text-black hover:scale-110 transition-opacity"
                           title="Delete thread"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -323,54 +323,54 @@ export default function EmployeeChat() {
             </div>
           </div>
 
-          <div className="pt-3 border-t border-neutral-800 text-[10px] font-mono text-neutral-500 text-center leading-relaxed">
-            Database thread bound to <span className="text-neutral-300 font-bold">{currentUser?.email}</span>.
+          <div className="pt-3 border-t-2 border-black text-[10px] font-mono text-neutral-600 text-center leading-relaxed">
+            Database thread bound to <span className="text-black font-bold">{currentUser?.email}</span>.
           </div>
         </div>
 
         {/* Center: Dedicated Chat Area */}
-        <div className="lg:col-span-3 bg-neutral-950 border border-neutral-800 rounded-none flex flex-col justify-between overflow-hidden">
+        <div className="lg:col-span-3 bg-white border-2 border-black rounded-none flex flex-col justify-between overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop">
           
           {/* Top Session Status Bar */}
-          <div className="px-6 py-3 border-b border-neutral-800 bg-black flex items-center justify-between text-xs font-mono">
+          <div className="px-6 py-3 border-b-2 border-black bg-neutral-100 flex items-center justify-between text-xs font-mono">
             <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 bg-white animate-pulse"></span>
-              <span className="font-bold text-white uppercase tracking-wider">
+              <span className="w-2.5 h-2.5 bg-black animate-pulse"></span>
+              <span className="font-black text-black uppercase tracking-wider">
                 {currentUser?.full_name} • {currentUser?.role_name}
               </span>
-              <span className="text-neutral-600">/</span>
-              <span className="text-neutral-400">{currentUser?.tenant_name}</span>
+              <span className="text-neutral-400">/</span>
+              <span className="text-neutral-700 font-bold">{currentUser?.tenant_name}</span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-neutral-300 border border-neutral-700 px-2 py-0.5 bg-neutral-900">
-              <Lock className="w-3 h-3 text-white" />
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-black border-2 border-black px-2 py-0.5 bg-white font-bold text-block-pop">
+              <Lock className="w-3 h-3 text-black" />
               <span>ISOLATED THREAD</span>
             </div>
           </div>
 
           {/* Messages Stream */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-black">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto space-y-5 py-6">
-                <div className="w-14 h-14 bg-white border border-white flex items-center justify-center rounded-none shadow-md overflow-hidden">
-                  <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-cover" />
+                <div className="w-14 h-14 bg-black border-2 border-black flex items-center justify-center rounded-none shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] overflow-hidden text-block-pop">
+                  <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-cover invert" />
                 </div>
                 
                 <div className="space-y-1">
-                  <h3 className="text-base font-black uppercase text-white tracking-wider">
+                  <h3 className="text-base font-black uppercase text-black tracking-wider">
                     TRUSTRA • {currentUser?.full_name}
                   </h3>
-                  <p className="text-[11px] font-mono text-neutral-300 font-bold uppercase tracking-wider">
+                  <p className="text-[11px] font-mono text-neutral-800 font-bold uppercase tracking-wider">
                     AI that knows what you are allowed to know.
                   </p>
-                  <p className="text-xs text-neutral-400 font-mono leading-relaxed pt-1">
-                    Permitted knowledge: <strong className="text-white">{currentUser?.role_name}</strong> at <strong className="text-white">{currentUser?.tenant_name}</strong>. Unauthorized documents never reach model context.
+                  <p className="text-xs text-neutral-600 font-mono leading-relaxed pt-1">
+                    Permitted knowledge: <strong className="text-black">{currentUser?.role_name}</strong> at <strong className="text-black">{currentUser?.tenant_name}</strong>. Unauthorized documents never reach model context.
                   </p>
                 </div>
 
                 {/* Suggestions tailored to this persona */}
                 <div className="w-full space-y-2 pt-2">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 block text-left">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-black font-black block text-left">
                     RECOMMENDED DEMO PROMPTS ({currentUser?.role_name}):
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
@@ -379,31 +379,31 @@ export default function EmployeeChat() {
                       return (
                         <div
                           key={idx}
-                          className="btn-waxy-black p-3.5 text-left border border-neutral-800 hover:border-neutral-600 flex flex-col justify-between group interactive-card cursor-pointer"
+                          className="bg-white p-3.5 text-left border-2 border-black flex flex-col justify-between group interactive-card text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
                         >
                           <div>
                             <div className="flex items-center justify-between mb-1">
-                              <span className="font-bold text-white text-xs font-mono">{s.label}</span>
-                              <span className={`text-[9px] font-mono uppercase px-1.5 py-0.2 font-bold ${
-                                isForbidden ? 'bg-neutral-900 text-neutral-300 border border-neutral-700' : 'bg-white text-black'
+                              <span className="font-bold text-black text-xs font-mono">{s.label}</span>
+                              <span className={`text-[9px] font-mono uppercase px-1.5 py-0.5 font-bold border ${
+                                isForbidden ? 'bg-neutral-100 text-black border-black' : 'bg-black text-white border-black'
                               }`}>
                                 {isForbidden ? 'BOUNDARY TEST' : 'PERMITTED'}
                               </span>
                             </div>
-                            <div className="text-[11px] text-neutral-400 line-clamp-2 mt-1 font-sans leading-snug">{s.query}</div>
+                            <div className="text-[11px] text-neutral-700 line-clamp-2 mt-1 font-sans leading-snug font-medium">{s.query}</div>
                           </div>
-                          <div className="pt-2 mt-2 border-t border-neutral-900 flex justify-end gap-2">
+                          <div className="pt-2 mt-2 border-t border-neutral-200 flex justify-end gap-2">
                             <button
                               type="button"
                               onClick={() => setInputQuestion(s.query)}
-                              className="text-[10px] font-mono text-neutral-400 hover:text-white px-1"
+                              className="text-[10px] font-mono text-neutral-600 hover:text-black font-bold px-1"
                             >
                               Edit
                             </button>
                             <button
                               type="button"
                               onClick={() => executeQuery(s.query)}
-                              className="px-2.5 py-0.5 rounded-none bg-white text-black text-[10px] font-mono font-bold hover:bg-neutral-200 uppercase tracking-wider"
+                              className="btn-waxy-black px-2.5 py-0.5 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider"
                             >
                               Run ↵
                             </button>
@@ -425,24 +425,24 @@ export default function EmployeeChat() {
                 return (
                   <div key={msg.message_id || index} className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
                     {!isUser && (
-                      <div className="w-8 h-8 rounded-none bg-white flex items-center justify-center shrink-0 mt-1 border border-white overflow-hidden">
-                        <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-cover" />
+                      <div className="w-8 h-8 rounded-none bg-black flex items-center justify-center shrink-0 mt-1 border-2 border-black overflow-hidden shadow-sm">
+                        <img src="/trustra-logo.png" alt="TRUSTRA" className="w-full h-full object-cover invert" />
                       </div>
                     )}
 
                     <div className={`max-w-2xl space-y-2 ${isUser ? 'items-end' : 'items-start'}`}>
                       <div
-                        className={`p-4 rounded-none text-xs sm:text-sm leading-relaxed border ${
+                        className={`p-4 rounded-none text-xs sm:text-sm leading-relaxed border-2 border-black text-block-pop shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                           isUser
-                            ? 'bg-white text-black border-white font-medium'
+                            ? 'bg-neutral-100 text-black font-semibold'
                             : isInsufficient
-                            ? 'bg-neutral-950 text-neutral-200 border-neutral-600'
-                            : 'bg-neutral-900 text-neutral-100 border-neutral-800'
+                            ? 'bg-neutral-50 text-black font-medium'
+                            : 'bg-white text-black font-medium'
                         }`}
                       >
                         {isInsufficient && (
-                          <div className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-white font-bold mb-2 pb-1.5 border-b border-neutral-700">
-                            <ShieldAlert className="w-4 h-4 text-white" />
+                          <div className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-black font-black mb-2 pb-1.5 border-b-2 border-black">
+                            <ShieldAlert className="w-4 h-4 text-black" />
                             <span>ACCESS CONTROL BOUNDARY: INSUFFICIENT ROLE SCOPE</span>
                           </div>
                         )}
@@ -452,8 +452,8 @@ export default function EmployeeChat() {
                       {/* Source Citations Pill List */}
                       {hasSources && (
                         <div className="space-y-1.5 pt-1">
-                          <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <BookOpen className="w-3.5 h-3.5 text-white" />
+                          <span className="text-[10px] font-mono font-black text-black uppercase tracking-widest flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 text-black" />
                             <span>VERIFIED GROUNDED SOURCES ({msg.retrieved_sources.length})</span>
                           </span>
                           <div className="flex flex-wrap gap-1.5">
@@ -461,10 +461,10 @@ export default function EmployeeChat() {
                               <button
                                 key={i}
                                 onClick={() => setSelectedCitation(src)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 text-xs font-mono transition-colors"
+                                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none border-2 border-black bg-white hover:bg-neutral-100 text-black text-xs font-mono font-bold transition-all text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                               >
-                                <span className="font-bold text-white">{src.document_title}</span>
-                                <span className="text-[10px] text-neutral-400">({src.source_reference})</span>
+                                <span className="font-black text-black">{src.document_title}</span>
+                                <span className="text-[10px] text-neutral-600">({src.source_reference})</span>
                               </button>
                             ))}
                           </div>
@@ -473,7 +473,7 @@ export default function EmployeeChat() {
                     </div>
 
                     {isUser && (
-                      <div className="w-8 h-8 rounded-none bg-neutral-800 text-white flex items-center justify-center shrink-0 mt-1 border border-neutral-700">
+                      <div className="w-8 h-8 rounded-none bg-neutral-100 text-black flex items-center justify-center shrink-0 mt-1 border-2 border-black shadow-sm font-bold">
                         <User className="w-4 h-4" />
                       </div>
                     )}
@@ -483,12 +483,12 @@ export default function EmployeeChat() {
             )}
 
             {loading && (
-              <div className="flex gap-3 items-center text-xs text-neutral-400 font-mono">
-                <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center border border-neutral-700 animate-pulse">
-                  <Bot className="w-4 h-4" />
+              <div className="flex gap-3 items-center text-xs text-neutral-700 font-mono font-bold">
+                <div className="w-8 h-8 bg-black text-white flex items-center justify-center border-2 border-black animate-pulse">
+                  <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-white animate-ping"></span>
+                  <span className="w-2 h-2 bg-black animate-ping"></span>
                   <span>Applying pre-LLM role filter & synthesizing response with Ollama...</span>
                 </div>
               </div>
@@ -497,20 +497,20 @@ export default function EmployeeChat() {
           </div>
 
           {/* Question Input Bar */}
-          <form onSubmit={handleSubmit} className="p-4 border-t border-neutral-800 bg-neutral-950">
-            <div className="flex items-center gap-2 bg-black border border-neutral-700 rounded-none px-4 py-2.5 focus-within:border-white transition-colors">
+          <form onSubmit={handleSubmit} className="p-4 border-t-2 border-black bg-neutral-50">
+            <div className="flex items-center gap-2 bg-white border-2 border-black rounded-none px-4 py-2.5 focus-within:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all">
               <input
                 type="text"
                 placeholder={`Query knowledge base as ${currentUser?.role_name} (${currentUser?.tenant_name})...`}
                 value={inputQuestion}
                 onChange={(e) => setInputQuestion(e.target.value)}
                 disabled={loading}
-                className="flex-1 text-xs sm:text-sm bg-transparent outline-none text-white placeholder-neutral-500 font-mono"
+                className="flex-1 text-xs sm:text-sm bg-transparent outline-none text-black placeholder:text-neutral-500 font-mono font-medium"
               />
               <button
                 type="submit"
                 disabled={!inputQuestion.trim() || loading}
-                className="btn-waxy-white px-4 py-2 font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-30"
+                className="btn-waxy-black px-4 py-2 font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-30"
               >
                 <span>SEND</span>
                 <Send className="w-3.5 h-3.5" />
@@ -522,23 +522,23 @@ export default function EmployeeChat() {
 
       {/* Citation Detail Modal */}
       {selectedCitation && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-neutral-950 border border-neutral-700 p-6 sm:p-8 max-w-xl w-full shadow-2xl space-y-4 rounded-none">
-            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border-2 border-black p-6 sm:p-8 max-w-xl w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-4 rounded-none text-black">
+            <div className="flex items-center justify-between border-b-2 border-black pb-3">
               <div>
-                <h4 className="text-sm font-bold text-white uppercase">{selectedCitation.document_title}</h4>
-                <p className="text-xs text-neutral-400 font-mono mt-0.5">{selectedCitation.source_reference}</p>
+                <h4 className="text-sm font-black text-black uppercase">{selectedCitation.document_title}</h4>
+                <p className="text-xs text-neutral-600 font-mono mt-0.5 font-bold">{selectedCitation.source_reference}</p>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 border border-neutral-700 bg-black text-neutral-300 font-bold uppercase">
+              <span className="text-[10px] font-mono px-2 py-0.5 border border-black bg-neutral-100 text-black font-black uppercase">
                 Score: {selectedCitation.similarity_score}
               </span>
             </div>
 
             <div className="space-y-1.5">
-              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest">
+              <span className="text-[10px] font-mono font-black text-black uppercase tracking-widest">
                 Authorized Retrieved Chunk (Post-Filter Context):
               </span>
-              <p className="text-xs text-neutral-200 bg-black p-4 border border-neutral-800 font-mono leading-relaxed whitespace-pre-wrap">
+              <p className="text-xs text-neutral-800 bg-neutral-50 p-4 border-2 border-black font-mono leading-relaxed whitespace-pre-wrap font-medium">
                 {selectedCitation.snippet}
               </p>
             </div>
@@ -546,7 +546,7 @@ export default function EmployeeChat() {
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setSelectedCitation(null)}
-                className="btn-waxy-white px-5 py-2 font-mono font-bold text-xs uppercase tracking-wider"
+                className="btn-waxy-black px-5 py-2 font-mono font-bold text-xs uppercase tracking-wider"
               >
                 Close Citation
               </button>

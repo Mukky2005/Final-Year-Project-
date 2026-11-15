@@ -124,14 +124,14 @@ export default function DemoPage() {
 
   const getRoleIcon = (roleName = '') => {
     const r = (roleName || '').toLowerCase();
-    if (r.includes('quantum')) return <Cpu className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    if (r.includes('secops') || r.includes('security')) return <ShieldAlert className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    if (r.includes('compliance') || r.includes('legal')) return <FileText className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    if (r.includes('admin')) return <SlidersHorizontal className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    if (r.includes('tech') || r.includes('engineer')) return <Code2 className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    if (r.includes('finance')) return <Coins className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    if (r.includes('analyst')) return <BarChart3 className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
-    return <Users className="w-4 h-4 text-neutral-400 group-hover:text-white transition-colors" />;
+    if (r.includes('quantum')) return <Cpu className="w-4 h-4 text-black" />;
+    if (r.includes('secops') || r.includes('security')) return <ShieldAlert className="w-4 h-4 text-black" />;
+    if (r.includes('compliance') || r.includes('legal')) return <FileText className="w-4 h-4 text-black" />;
+    if (r.includes('admin')) return <SlidersHorizontal className="w-4 h-4 text-black" />;
+    if (r.includes('tech') || r.includes('engineer')) return <Code2 className="w-4 h-4 text-black" />;
+    if (r.includes('finance')) return <Coins className="w-4 h-4 text-black" />;
+    if (r.includes('analyst')) return <BarChart3 className="w-4 h-4 text-black" />;
+    return <Users className="w-4 h-4 text-black" />;
   };
 
   const renderPersonaCard = (user) => {
@@ -142,49 +142,49 @@ export default function DemoPage() {
     return (
       <div
         key={user.user_id}
-        className="border border-neutral-800 bg-neutral-950 p-6 flex flex-col justify-between space-y-5 interactive-card group hover:border-neutral-400 hover:bg-neutral-900/40 transition-all rounded-none"
+        className="border-2 border-black bg-white p-6 flex flex-col justify-between space-y-5 interactive-card text-block-pop rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
       >
         <div className="space-y-4">
           {/* Top Row: Role Badge + Department Icon */}
-          <div className="flex items-center justify-between gap-2 border-b border-neutral-900 pb-3">
-            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border border-neutral-800 bg-black text-neutral-300 font-bold group-hover:border-neutral-600 group-hover:text-white transition-colors truncate max-w-[190px]">
+          <div className="flex items-center justify-between gap-2 border-b-2 border-black pb-3">
+            <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border border-black bg-neutral-100 text-black font-bold truncate max-w-[190px]">
               {user.role_name}
             </span>
-            <div className="p-1 border border-neutral-900 bg-black shrink-0">
+            <div className="p-1.5 border border-black bg-neutral-100 shrink-0">
               {getRoleIcon(user.role_name)}
             </div>
           </div>
 
           {/* User Name & Email */}
           <div>
-            <h4 className="text-base font-bold text-white tracking-tight group-hover:text-white transition-colors">
+            <h4 className="text-base font-black text-black tracking-tight uppercase">
               {user.full_name}
             </h4>
-            <p className="text-xs font-mono text-neutral-400 mt-0.5 truncate">
+            <p className="text-xs font-mono text-neutral-600 mt-0.5 truncate font-medium">
               {user.email}
             </p>
-            <div className="text-[10px] font-mono text-neutral-500 pt-1.5 flex items-center gap-1">
-              <span>Endpoint:</span>
-              <code className="text-neutral-300 font-bold">{endpoint}</code>
+            <div className="text-[10px] font-mono text-neutral-600 pt-1.5 flex items-center gap-1">
+              <span className="font-bold">Endpoint:</span>
+              <code className="text-black font-bold bg-neutral-100 border border-neutral-300 px-1 py-0.2">{endpoint}</code>
             </div>
           </div>
 
           {/* Scoped Knowledge Boundaries */}
           <div className="space-y-3 pt-1">
             <div className="space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-bold flex items-center gap-1.5">
-                <span className="text-white text-xs">✓</span> Permitted Knowledge:
+              <span className="text-[10px] font-mono uppercase tracking-wider text-black font-black flex items-center gap-1.5">
+                <span className="text-black text-xs font-black">✓</span> Permitted Knowledge:
               </span>
-              <p className="text-xs text-neutral-300 leading-relaxed pl-3 border-l-2 border-white/40 font-sans">
+              <p className="text-xs text-neutral-800 leading-relaxed pl-3 border-l-2 border-black font-medium">
                 {details.allowed}
               </p>
             </div>
 
             <div className="space-y-1">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 font-bold flex items-center gap-1.5">
-                <Lock className="w-3 h-3 text-neutral-500" /> Strictly Blocked:
+              <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-600 font-bold flex items-center gap-1.5">
+                <Lock className="w-3 h-3 text-neutral-600" /> Strictly Blocked:
               </span>
-              <p className="text-xs text-neutral-500 leading-relaxed pl-3 border-l-2 border-neutral-800 font-sans">
+              <p className="text-xs text-neutral-500 leading-relaxed pl-3 border-l-2 border-neutral-300 font-normal">
                 {details.blocked}
               </p>
             </div>
@@ -195,7 +195,7 @@ export default function DemoPage() {
         <div className="pt-2 space-y-2">
           <button
             onClick={() => handleLaunchPersona(user.user_id, endpoint)}
-            className="w-full btn-waxy-white py-2.5 px-3 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 group-hover:bg-white transition-all shadow-sm"
+            className="w-full btn-waxy-black py-2.5 px-3 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2"
           >
             <span>{user.is_admin ? 'Launch Admin Chat' : 'Launch Role Chat'}</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -204,7 +204,7 @@ export default function DemoPage() {
           {user.is_admin && (
             <button
               onClick={() => handleLaunchPersona(user.user_id, isCompanyABC ? '/admin/company-abc' : '/admin/company-xyz')}
-              className="w-full py-2 px-3 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-neutral-800 bg-black text-neutral-300 hover:text-white hover:border-neutral-500 transition-colors"
+              className="w-full py-2 px-3 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border-2 border-black bg-white text-black hover:bg-neutral-100 transition-all text-block-pop"
             >
               <SlidersHorizontal className="w-3 h-3" />
               <span>Admin Workspace</span>
@@ -216,26 +216,26 @@ export default function DemoPage() {
   };
 
   return (
-    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 text-neutral-100">
+    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 text-black bg-white">
       
       {/* Header (Only on /demo main page) */}
       {selectedTenantFilter === 'ALL' && (
         <div className="space-y-4">
-          <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 space-y-4">
+          <div className="border-2 border-black bg-white p-6 sm:p-8 space-y-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 border border-neutral-700 bg-black font-mono text-[10px] uppercase tracking-widest text-neutral-300">
-                <ShieldCheck className="w-3.5 h-3.5 text-white" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black bg-neutral-100 font-mono text-[10px] uppercase tracking-widest text-black font-bold">
+                <ShieldCheck className="w-3.5 h-3.5 text-black" />
                 <span>LIVE SECURITY TEST ENVIRONMENT</span>
               </div>
-              <div className="font-mono text-xs text-neutral-400 border border-neutral-800 px-3 py-1 bg-black">
-                FAIL-CLOSED STATUS: <span className="text-white font-bold">ENFORCED</span>
+              <div className="font-mono text-xs text-black border-2 border-black px-3 py-1 bg-white font-bold">
+                FAIL-CLOSED STATUS: <span className="bg-black text-white px-1.5 py-0.5">ENFORCED</span>
               </div>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black uppercase text-white tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-black uppercase text-black tracking-tight">
               Interactive Multi-Role Security Demo
             </h1>
-            <p className="text-sm text-neutral-400 font-mono max-w-3xl leading-relaxed">
+            <p className="text-sm text-neutral-700 font-mono max-w-3xl leading-relaxed font-medium">
               Test whether the actual data is truly secure. Switch between 8 employee personas across 2 separate companies.
               Ask allowed queries to verify instant retrieval, then intentionally attempt forbidden cross-department or cross-company queries to observe the pre-LLM retrieval gate physically prune unauthorized context.
             </p>
@@ -246,12 +246,12 @@ export default function DemoPage() {
       {/* 2-Company Selection Grid (Displayed at /demo) */}
       {selectedTenantFilter === 'ALL' && (
         <div className="space-y-6">
-          <div className="border-b border-neutral-800 pb-4 space-y-1">
-            <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-neutral-400">
-              <Building2 className="w-4 h-4 text-white" />
+          <div className="border-b-2 border-black pb-4 space-y-1">
+            <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-neutral-600 font-bold">
+              <Building2 className="w-4 h-4 text-black" />
               <span>Select Company</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black uppercase text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black uppercase text-black tracking-tight">
               Enterprise Companies
             </h2>
           </div>
@@ -259,20 +259,20 @@ export default function DemoPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
             
             {/* Company ABC Card */}
-            <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 flex flex-col justify-between space-y-6 interactive-card group hover:border-neutral-400 hover:bg-neutral-900/40 transition-all">
+            <div className="border-2 border-black bg-white p-6 sm:p-8 flex flex-col justify-between space-y-6 interactive-card text-block-pop shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="space-y-3">
-                <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
-                  <span className="font-mono text-xs px-2.5 py-0.5 border border-white/20 bg-white/10 text-white font-bold">
+                <div className="flex items-center justify-between border-b-2 border-black pb-3">
+                  <span className="font-mono text-xs px-2.5 py-0.5 border border-black bg-black text-white font-bold">
                     TENANT 01
                   </span>
-                  <Building2 className="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" />
+                  <Building2 className="w-5 h-5 text-black" />
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                  <h3 className="text-2xl font-black text-black uppercase tracking-tight">
                     Company ABC
                   </h3>
-                  <p className="text-xs font-mono text-neutral-400 mt-1">
+                  <p className="text-xs font-mono text-neutral-600 mt-1 font-medium">
                     Commercial Enterprise · Marketing, Engineering, and Finance divisions
                   </p>
                 </div>
@@ -280,27 +280,28 @@ export default function DemoPage() {
 
               <button
                 onClick={() => navigate('/demo/company-abc')}
-                className="btn-waxy-white py-3 px-4 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center group-hover:bg-white transition-all shadow-md"
+                className="btn-waxy-black py-3 px-4 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
               >
                 <span>Enter Company ABC</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {/* Company XYZ Card */}
-            <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 flex flex-col justify-between space-y-6 interactive-card group hover:border-neutral-400 hover:bg-neutral-900/40 transition-all">
+            <div className="border-2 border-black bg-white p-6 sm:p-8 flex flex-col justify-between space-y-6 interactive-card text-block-pop shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="space-y-3">
-                <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
-                  <span className="font-mono text-xs px-2.5 py-0.5 border border-white/20 bg-white/10 text-white font-bold">
+                <div className="flex items-center justify-between border-b-2 border-black pb-3">
+                  <span className="font-mono text-xs px-2.5 py-0.5 border border-black bg-black text-white font-bold">
                     TENANT 02
                   </span>
-                  <Building2 className="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" />
+                  <Building2 className="w-5 h-5 text-black" />
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                  <h3 className="text-2xl font-black text-black uppercase tracking-tight">
                     Company XYZ
                   </h3>
-                  <p className="text-xs font-mono text-neutral-400 mt-1">
+                  <p className="text-xs font-mono text-neutral-600 mt-1 font-medium">
                     High-Security Research · Quantum Computing & Defense Systems
                   </p>
                 </div>
@@ -308,9 +309,10 @@ export default function DemoPage() {
 
               <button
                 onClick={() => navigate('/demo/company-xyz')}
-                className="btn-waxy-white py-3 px-4 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center group-hover:bg-white transition-all shadow-md"
+                className="btn-waxy-black py-3 px-4 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
               >
                 <span>Enter Company XYZ</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
@@ -321,10 +323,10 @@ export default function DemoPage() {
       {/* Company ABC View (At /demo/company-abc) */}
       {selectedTenantFilter === 'ABC' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-black pb-4">
             <button
               onClick={() => navigate('/demo')}
-              className="inline-flex items-center gap-2 font-mono text-xs text-neutral-400 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 font-mono text-xs font-bold text-black hover:underline"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>← Back to All Companies (/demo)</span>
@@ -332,31 +334,31 @@ export default function DemoPage() {
 
             <button
               onClick={() => navigate('/demo/company-xyz')}
-              className="font-mono text-xs text-neutral-400 hover:text-white inline-flex items-center gap-1.5 transition-colors border border-neutral-800 px-3 py-1.5 bg-neutral-950 hover:bg-neutral-900"
+              className="font-mono text-xs font-bold text-black hover:bg-neutral-100 inline-flex items-center gap-1.5 transition-colors border-2 border-black px-3 py-1.5 bg-white text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             >
               <span>Switch to Company XYZ (/demo/company-xyz)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-4">
+          <div className="border-2 border-black bg-white p-6 sm:p-8 space-y-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-black pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[11px] px-2 py-0.5 border border-white/20 bg-white/10 text-white font-bold">
+                  <span className="font-mono text-[11px] px-2 py-0.5 border border-black bg-black text-white font-bold">
                     TENANT 01
                   </span>
-                  <span className="font-mono text-xl font-bold uppercase tracking-wider text-white">
+                  <span className="font-mono text-xl font-black uppercase tracking-wider text-black">
                     Company ABC
                   </span>
                 </div>
-                <p className="text-xs text-neutral-400 font-mono">
+                <p className="text-xs text-neutral-600 font-mono font-medium">
                   Commercial Enterprise · Marketing, Engineering, and Finance divisions
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-neutral-400">
-                <span className="px-2.5 py-1 border border-neutral-800 bg-black text-neutral-300">
-                  Endpoint: <strong className="text-white">/demo/company-abc</strong>
+              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-black">
+                <span className="px-2.5 py-1 border border-black bg-neutral-100 font-bold">
+                  Endpoint: <strong className="text-black">/demo/company-abc</strong>
                 </span>
               </div>
             </div>
@@ -371,10 +373,10 @@ export default function DemoPage() {
       {/* Company XYZ View (At /demo/company-xyz) */}
       {selectedTenantFilter === 'XYZ' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-black pb-4">
             <button
               onClick={() => navigate('/demo')}
-              className="inline-flex items-center gap-2 font-mono text-xs text-neutral-400 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 font-mono text-xs font-bold text-black hover:underline"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>← Back to All Companies (/demo)</span>
@@ -382,31 +384,31 @@ export default function DemoPage() {
 
             <button
               onClick={() => navigate('/demo/company-abc')}
-              className="font-mono text-xs text-neutral-400 hover:text-white inline-flex items-center gap-1.5 transition-colors border border-neutral-800 px-3 py-1.5 bg-neutral-950 hover:bg-neutral-900"
+              className="font-mono text-xs font-bold text-black hover:bg-neutral-100 inline-flex items-center gap-1.5 transition-colors border-2 border-black px-3 py-1.5 bg-white text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             >
               <span>Switch to Company ABC (/demo/company-abc)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-4">
+          <div className="border-2 border-black bg-white p-6 sm:p-8 space-y-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-black pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[11px] px-2 py-0.5 border border-white/20 bg-white/10 text-white font-bold">
+                  <span className="font-mono text-[11px] px-2 py-0.5 border border-black bg-black text-white font-bold">
                     TENANT 02
                   </span>
-                  <span className="font-mono text-xl font-bold uppercase tracking-wider text-white">
+                  <span className="font-mono text-xl font-black uppercase tracking-wider text-black">
                     Company XYZ
                   </span>
                 </div>
-                <p className="text-xs text-neutral-400 font-mono">
+                <p className="text-xs text-neutral-600 font-mono font-medium">
                   High-Security Research · Quantum Computing & Defense Systems
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-neutral-400">
-                <span className="px-2.5 py-1 border border-neutral-800 bg-black text-neutral-300">
-                  Endpoint: <strong className="text-white">/demo/company-xyz</strong>
+              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-black">
+                <span className="px-2.5 py-1 border border-black bg-neutral-100 font-bold">
+                  Endpoint: <strong className="text-black">/demo/company-xyz</strong>
                 </span>
               </div>
             </div>
@@ -419,66 +421,66 @@ export default function DemoPage() {
       )}
 
       {/* Full Pre-LLM Access Boundary Matrix */}
-      <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 space-y-6">
+      <div className="border-2 border-black bg-white p-6 sm:p-8 space-y-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop">
         <div className="space-y-1">
-          <div className="font-mono text-xs uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
-            <Layers className="w-4 h-4 text-white" />
+          <div className="font-mono text-xs uppercase tracking-widest text-neutral-600 flex items-center gap-1.5 font-bold">
+            <Layers className="w-4 h-4 text-black" />
             <span>Pre-LLM Access Boundary Matrix</span>
           </div>
-          <h2 className="text-2xl font-black uppercase text-white">
+          <h2 className="text-2xl font-black uppercase text-black">
             Enterprise Knowledge Visibility Verification
           </h2>
-          <p className="text-xs sm:text-sm text-neutral-400 font-mono">
+          <p className="text-xs sm:text-sm text-neutral-600 font-mono font-medium">
             Hover or click any cell below to inspect the live physical SQL filtering rule enforced by the database:
           </p>
         </div>
 
         {/* Live Policy Inspector Card */}
         {inspectedPolicy && (
-          <div className="border border-neutral-700 bg-black p-4 space-y-2 animate-tab-fade">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800 pb-2">
+          <div className="border-2 border-black bg-neutral-50 p-4 space-y-2 animate-tab-fade text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-2">
               <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-white" />
-                <span className="font-mono text-xs uppercase tracking-wider text-neutral-400">
-                  Target Policy Rule: <strong className="text-white">{inspectedPolicy.doc}</strong>
+                <Info className="w-4 h-4 text-black" />
+                <span className="font-mono text-xs uppercase tracking-wider text-neutral-700">
+                  Target Policy Rule: <strong className="text-black">{inspectedPolicy.doc}</strong>
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-neutral-500 uppercase">Evaluated Actor:</span>
-                <span className="text-xs font-mono font-bold text-white uppercase">{inspectedPolicy.role}</span>
+                <span className="text-[10px] font-mono text-neutral-600 uppercase font-bold">Evaluated Actor:</span>
+                <span className="text-xs font-mono font-black text-black uppercase">{inspectedPolicy.role}</span>
                 {inspectedPolicy.allowed ? (
-                  <span className="px-2 py-0.5 bg-white text-black font-mono font-bold text-[10px] uppercase">
+                  <span className="px-2 py-0.5 bg-black text-white font-mono font-bold text-[10px] uppercase">
                     ✓ ACCESS PERMITTED
                   </span>
                 ) : (
-                  <span className="px-2 py-0.5 bg-neutral-900 border border-neutral-700 text-neutral-200 font-mono font-bold text-[10px] uppercase">
+                  <span className="px-2 py-0.5 bg-white border-2 border-black text-black font-mono font-bold text-[10px] uppercase">
                     🔒 STRICTLY DENIED (0 CHUNKS)
                   </span>
                 )}
               </div>
             </div>
-            <p className="text-xs font-mono text-neutral-300 leading-relaxed pt-1">
-              <span className="text-neutral-500 uppercase font-bold mr-1">Enforcement Logic:</span>
+            <p className="text-xs font-mono text-black leading-relaxed pt-1 font-medium">
+              <span className="text-neutral-600 uppercase font-bold mr-1">Enforcement Logic:</span>
               {inspectedPolicy.reason}
             </p>
           </div>
         )}
 
         <div className="overflow-x-auto font-mono text-xs">
-          <table className="w-full text-left border-collapse border border-neutral-800">
+          <table className="w-full text-left border-collapse border-2 border-black">
             <thead>
-              <tr className="border-b border-neutral-800 bg-black text-[10px] text-neutral-400 uppercase tracking-wider">
-                <th className="p-3 border-r border-neutral-800">Document Policy</th>
-                <th className="p-3 border-r border-neutral-800">Tenant</th>
-                <th className="p-3 border-r border-neutral-800 text-center">ABC Tech</th>
-                <th className="p-3 border-r border-neutral-800 text-center">ABC Finance</th>
-                <th className="p-3 border-r border-neutral-800 text-center">ABC Analyst</th>
-                <th className="p-3 border-r border-neutral-800 text-center">XYZ Quantum</th>
-                <th className="p-3 border-r border-neutral-800 text-center">XYZ SecOps</th>
+              <tr className="border-b-2 border-black bg-neutral-100 text-[10px] text-black uppercase tracking-wider font-bold">
+                <th className="p-3 border-r-2 border-black">Document Policy</th>
+                <th className="p-3 border-r-2 border-black">Tenant</th>
+                <th className="p-3 border-r-2 border-black text-center">ABC Tech</th>
+                <th className="p-3 border-r-2 border-black text-center">ABC Finance</th>
+                <th className="p-3 border-r-2 border-black text-center">ABC Analyst</th>
+                <th className="p-3 border-r-2 border-black text-center">XYZ Quantum</th>
+                <th className="p-3 border-r-2 border-black text-center">XYZ SecOps</th>
                 <th className="p-3 text-center">XYZ Compliance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-900 bg-black">
+            <tbody className="divide-y divide-black bg-white">
               {[
                 {
                   doc: 'Engineering & Laptop Security',
@@ -577,9 +579,9 @@ export default function DemoPage() {
                   }
                 }
               ].map((row, rIdx) => (
-                <tr key={rIdx} className="hover:bg-neutral-900/60 transition-colors">
-                  <td className="p-3 font-bold text-white border-r border-neutral-900">{row.doc}</td>
-                  <td className="p-3 text-neutral-400 border-r border-neutral-900">{row.tenant}</td>
+                <tr key={rIdx} className="hover:bg-neutral-50 transition-colors">
+                  <td className="p-3 font-bold text-black border-r-2 border-black">{row.doc}</td>
+                  <td className="p-3 text-neutral-600 font-medium border-r-2 border-black">{row.tenant}</td>
                   {['ABC Tech', 'ABC Finance', 'ABC Analyst', 'XYZ Quantum', 'XYZ SecOps', 'XYZ Compliance'].map((roleName, cIdx) => {
                     const rule = row.roles[roleName];
                     const isAllowed = rule.allowed;
@@ -596,16 +598,16 @@ export default function DemoPage() {
                           reason: rule.reason
                         })}
                         title={`${roleName} on ${row.doc}: ${rule.reason}`}
-                        className={`p-2.5 text-center border-r border-neutral-900 cursor-pointer transition-all ${
+                        className={`p-2.5 text-center border-r-2 border-black cursor-pointer transition-all ${
                           cIdx === 5 ? 'border-r-0' : ''
-                        } ${isSelected ? 'ring-1 ring-white bg-neutral-900' : 'hover:bg-neutral-800/50'}`}
+                        } ${isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'}`}
                       >
                         {isAllowed ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white text-black font-bold font-mono text-[10px] shadow-sm">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-black text-white font-bold font-mono text-[10px] shadow-sm text-block-pop">
                             ✓ ALLOWED
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 text-neutral-400 font-mono text-[10px]">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-black text-black font-mono text-[10px] font-bold text-block-pop">
                             ✕ BLOCKED
                           </span>
                         )}
@@ -620,7 +622,7 @@ export default function DemoPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-800 pt-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t-2 border-black pt-6">
         <button
           onClick={() => navigate('/')}
           className="btn-waxy-white py-3 px-6 text-xs font-mono font-bold uppercase tracking-wider inline-flex items-center gap-2"
@@ -628,7 +630,7 @@ export default function DemoPage() {
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Product Overview</span>
         </button>
-        <p className="text-[11px] font-mono text-neutral-500 uppercase tracking-wider">
+        <p className="text-[11px] font-mono text-neutral-600 font-bold uppercase tracking-wider">
           TRUSTRA · Pre-LLM Zero-Leakage Architecture
         </p>
       </div>
