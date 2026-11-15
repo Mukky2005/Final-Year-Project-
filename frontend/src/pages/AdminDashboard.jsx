@@ -207,36 +207,9 @@ export default function AdminDashboard() {
     );
   }
 
-  const isCompanyABC = tenant?.tenant_name?.includes('ABC') || currentUser?.tenant_name?.includes('ABC');
-  const isCompanyXYZ = tenant?.tenant_name?.includes('XYZ') || currentUser?.tenant_name?.includes('XYZ');
-  const parentCompanyEndpoint = isCompanyABC ? '/demo/company-abc' : isCompanyXYZ ? '/demo/company-xyz' : '/demo';
-  const parentCompanyLabel = isCompanyABC ? 'Company ABC' : isCompanyXYZ ? 'Company XYZ' : 'Demo Lab';
-
   return (
     <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 text-black bg-white font-sans">
       
-      {/* Top Breadcrumb Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black pb-3">
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <button
-            onClick={() => navigate(parentCompanyEndpoint)}
-            className="inline-flex items-center gap-1.5 text-black font-bold hover:underline transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>← Back to {parentCompanyLabel} Directory ({parentCompanyEndpoint})</span>
-          </button>
-          <span className="text-black font-bold">/</span>
-          <span className="text-black font-black uppercase">{tenant?.tenant_name || 'Tenant'} Administration Console</span>
-        </div>
-
-        <div className="font-mono text-[10px] text-neutral-600 flex items-center gap-2">
-          <span className="font-bold">ENDPOINT:</span>
-          <code className="text-black font-black bg-neutral-100 border border-black px-2 py-0.5">
-            {window.location.pathname}
-          </code>
-        </div>
-      </div>
-
       {/* Header & Stats Banner */}
       <div className="bg-white rounded-none p-6 sm:p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>

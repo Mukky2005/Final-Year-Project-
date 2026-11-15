@@ -211,39 +211,9 @@ export default function EmployeeChat() {
     }
   };
 
-  const isCompanyABC = currentUser?.tenant_name?.includes('ABC');
-  const isCompanyXYZ = currentUser?.tenant_name?.includes('XYZ');
-  const parentCompanyEndpoint = isCompanyABC ? '/demo/company-abc' : isCompanyXYZ ? '/demo/company-xyz' : '/demo';
-  const parentCompanyLabel = isCompanyABC ? 'Company ABC' : isCompanyXYZ ? 'Company XYZ' : 'Demo Lab';
-
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-black bg-white space-y-4">
-      {/* Top Breadcrumb Navigation */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black pb-3">
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <button
-            onClick={() => navigate(parentCompanyEndpoint)}
-            className="inline-flex items-center gap-1.5 text-black font-bold hover:underline transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>← Back to {parentCompanyLabel} Directory</span>
-          </button>
-          <span className="text-black font-bold">/</span>
-          <span className="text-black font-black uppercase">{currentUser?.full_name || 'Role Chat'}</span>
-          <span className="text-[10px] text-black font-bold uppercase px-2 py-0.5 border border-black bg-neutral-100 font-mono">
-            {currentUser?.role_name}
-          </span>
-        </div>
-
-        <div className="font-mono text-[10px] text-neutral-600 flex items-center gap-2">
-          <span className="font-bold">ENDPOINT:</span>
-          <code className="text-black font-black bg-neutral-100 border border-black px-2 py-0.5">
-            {window.location.pathname}
-          </code>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-190px)] min-h-[600px]">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-140px)] min-h-[600px]">
         
         {/* Left Sidebar: Active Role, Actions, and Isolated History */}
         <div className="lg:col-span-1 bg-neutral-50 border-2 border-black p-5 rounded-none flex flex-col justify-between shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-block-pop">

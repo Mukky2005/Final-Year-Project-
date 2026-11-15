@@ -163,10 +163,6 @@ export default function DemoPage() {
             <p className="text-xs font-mono text-neutral-600 mt-0.5 truncate font-medium">
               {user.email}
             </p>
-            <div className="text-[10px] font-mono text-neutral-600 pt-1.5 flex items-center gap-1">
-              <span className="font-bold">Endpoint:</span>
-              <code className="text-black font-bold bg-neutral-100 border border-neutral-300 px-1 py-0.2">{endpoint}</code>
-            </div>
           </div>
 
           {/* Scoped Knowledge Boundaries */}
@@ -329,14 +325,14 @@ export default function DemoPage() {
               className="inline-flex items-center gap-2 font-mono text-xs font-bold text-black hover:underline"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>← Back to All Companies (/demo)</span>
+              <span>← Back to All Companies</span>
             </button>
 
             <button
               onClick={() => navigate('/demo/company-xyz')}
               className="font-mono text-xs font-bold text-black hover:bg-neutral-100 inline-flex items-center gap-1.5 transition-colors border-2 border-black px-3 py-1.5 bg-white text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             >
-              <span>Switch to Company XYZ (/demo/company-xyz)</span>
+              <span>Switch to Company XYZ</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -356,11 +352,6 @@ export default function DemoPage() {
                   Commercial Enterprise · Marketing, Engineering, and Finance divisions
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-black">
-                <span className="px-2.5 py-1 border border-black bg-neutral-100 font-bold">
-                  Endpoint: <strong className="text-black">/demo/company-abc</strong>
-                </span>
-              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -379,14 +370,14 @@ export default function DemoPage() {
               className="inline-flex items-center gap-2 font-mono text-xs font-bold text-black hover:underline"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>← Back to All Companies (/demo)</span>
+              <span>← Back to All Companies</span>
             </button>
 
             <button
               onClick={() => navigate('/demo/company-abc')}
               className="font-mono text-xs font-bold text-black hover:bg-neutral-100 inline-flex items-center gap-1.5 transition-colors border-2 border-black px-3 py-1.5 bg-white text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             >
-              <span>Switch to Company ABC (/demo/company-abc)</span>
+              <span>Switch to Company ABC</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -405,11 +396,6 @@ export default function DemoPage() {
                 <p className="text-xs text-neutral-600 font-mono font-medium">
                   High-Security Research · Quantum Computing & Defense Systems
                 </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-black">
-                <span className="px-2.5 py-1 border border-black bg-neutral-100 font-bold">
-                  Endpoint: <strong className="text-black">/demo/company-xyz</strong>
-                </span>
               </div>
             </div>
 
