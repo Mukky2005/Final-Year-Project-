@@ -50,12 +50,20 @@ def query_knowledge(
             role_name = f"{sim_role.role_name} (Simulated by Admin)"
 
     tenant_name = current_user.tenant.tenant_name
+    effective_role_id = req.simulate_role_id if (req.simulate_role_id and current_user.role.is_admin) else current_user.role_id
 
     # 2. If NO authorized chunks found, fail closed immediately (FR-15, MVP-06)
     if not authorized_chunks:
         answer = "I do not have sufficient information in your permitted knowledge scope to answer this question."
         is_grounded = False
         audit_outcome = "DENIED/INSUFFICIENT_SCOPE"
+        denial_reason = retrieval_service.diagnose_denial_reason(
+            db=db,
+            user=current_user,
+            query_text=question,
+            effective_role_id=effective_role_id,
+            role_name=role_name
+        )
     else:
         # 3. Construct prompt with ONLY authorized chunks and call Ollama
         answer = llm_service.generate_grounded_answer(
@@ -66,6 +74,7 @@ def query_knowledge(
         )
         is_grounded = "insufficient information" not in answer.lower()
         audit_outcome = "SUCCESS"
+        denial_reason = None
 
     # 4. Format citations
     source_refs = []
@@ -125,11 +134,14 @@ def query_knowledge(
         action="KNOWLEDGE_QUERY",
         outcome=audit_outcome,
         details={
+            "query": question,
             "question": question,
+            "authorized_chunks": auth_count,
             "authorized_chunks_count": auth_count,
             "total_tenant_chunks": total_tenant_chunks,
             "citations_count": len(source_refs),
-            "simulated": bool(req.simulate_role_id)
+            "simulated": bool(req.simulate_role_id),
+            "reason": denial_reason if not authorized_chunks else "Authorized query within permitted role scope."
         }
     )
 

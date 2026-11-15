@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, func, cast
 from sqlalchemy.dialects.postgresql import JSONB
-from app.models import DocumentChunk, Document, User, Role
+from app.models import DocumentChunk, Document, User, Role, Tenant
 from app.services.embedding import embedding_service
 
 logger = logging.getLogger(__name__)
@@ -106,5 +106,78 @@ class RetrievalService:
         )
 
         return authorized_chunks, len(authorized_chunks), total_tenant_chunks
+
+    @staticmethod
+    def diagnose_denial_reason(
+        db: Session,
+        user: User,
+        query_text: str,
+        effective_role_id: str,
+        role_name: str
+    ) -> str:
+        """
+        Diagnose the physical access control reason why 0 chunks were authorized.
+        Distinguishes between:
+        1. Departmental / Role Boundary (matching document exists in tenant but role is blocked)
+        2. Cross-Tenant Physical Boundary (matching document exists in foreign tenant)
+        3. General Insufficient Knowledge Scope (no relevant authorized documents)
+        """
+        try:
+            query_vector = embedding_service.get_embedding(query_text)
+
+            # 1. Check if matching document exists within the same tenant but role is excluded
+            tenant_match = db.query(
+                DocumentChunk, Document.title
+            ).join(
+                Document, Document.document_id == DocumentChunk.document_id
+            ).filter(
+                DocumentChunk.tenant_id == user.tenant_id,
+                Document.status == "INDEXED"
+            ).order_by(
+                DocumentChunk.embedding.cosine_distance(query_vector)
+            ).limit(1).first()
+
+            if tenant_match:
+                chunk, doc_title = tenant_match
+                allowed_role_ids = chunk.allowed_role_ids or []
+                if chunk.visibility_scope != "ALL_TENANT_EMPLOYEES" and effective_role_id not in allowed_role_ids:
+                    allowed_roles = db.query(Role).filter(Role.role_id.in_(allowed_role_ids)).all()
+                    allowed_names = [r.role_name for r in allowed_roles] or ["Designated Department Roles"]
+                    allowed_str = ", ".join(allowed_names)
+                    return (
+                        f"Departmental Role Boundary Violation: Query target corresponds to restricted document '{doc_title}', "
+                        f"which is authorized only for [{allowed_str}]. Active role '{role_name}' was blocked by physical SQL filter."
+                    )
+
+            # 2. Check if matching document exists in a foreign tenant (Cross-Tenant Boundary)
+            foreign_match = db.query(
+                DocumentChunk, Document.title, Document.tenant_id
+            ).join(
+                Document, Document.document_id == DocumentChunk.document_id
+            ).filter(
+                DocumentChunk.tenant_id != user.tenant_id,
+                Document.status == "INDEXED"
+            ).order_by(
+                DocumentChunk.embedding.cosine_distance(query_vector)
+            ).limit(1).first()
+
+            if foreign_match:
+                chunk, doc_title, ext_tenant_id = foreign_match
+                ext_tenant = db.query(Tenant).filter(Tenant.tenant_id == ext_tenant_id).first()
+                ext_name = ext_tenant.tenant_name if ext_tenant else "Foreign Enterprise Tenant"
+                return (
+                    f"Cross-Tenant Physical Isolation Boundary: Query target references proprietary data belonging to '{ext_name}'. "
+                    f"Physical schema partition pruned 100% of chunks before LLM ingestion."
+                )
+
+            # 3. Fallback general boundary reason
+            tenant_label = user.tenant.tenant_name if user.tenant else "Tenant"
+            return (
+                f"Role Knowledge Boundary: 0 chunks authorized for role '{role_name}' within {tenant_label}. "
+                f"Pre-LLM retrieval gate pruned unauthorized context to enforce zero-leakage guarantee."
+            )
+        except Exception as e:
+            logger.error(f"Error diagnosing denial reason: {e}")
+            return f"Access Denied: Zero authorized chunks retrieved for role '{role_name}'. Pre-LLM filter enforced."
 
 retrieval_service = RetrievalService()

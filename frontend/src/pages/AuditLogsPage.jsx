@@ -124,13 +124,56 @@ export default function AuditLogsPage() {
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono text-[11px] text-neutral-800 max-w-md truncate font-medium">
+                      <td className="py-3 px-4 font-mono text-[11px] text-neutral-800 font-medium">
                         {evt.details ? (
-                          <span>
-                            {evt.details.query && `"${evt.details.query}" `}
-                            {evt.details.authorized_chunks !== undefined && `(Chunks: ${evt.details.authorized_chunks}/${evt.details.total_tenant_chunks})`}
-                            {evt.details.reason && `[${evt.details.reason}]`}
-                          </span>
+                          <div className="space-y-1.5 max-w-2xl">
+                            {(evt.details.query || evt.details.question) && (
+                              <div className="text-black font-bold text-xs">
+                                <span className="text-neutral-500 uppercase font-mono text-[10px] mr-1">Query:</span>
+                                <span>"{evt.details.query || evt.details.question}"</span>
+                              </div>
+                            )}
+
+                            {isDenied ? (
+                              <div className="p-2.5 border-2 border-black bg-neutral-50 text-black text-xs space-y-1 text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                <div className="text-[10px] font-mono font-black uppercase text-black flex items-center gap-1.5">
+                                  <ShieldAlert className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+                                  <span>Denial Reason & Security Verification:</span>
+                                </div>
+                                <p className="font-sans font-medium text-black leading-relaxed">
+                                  {evt.details.reason || 'Physical SQL retrieval filter pruned 100% of candidate chunks. Role lacks required permission scope for requested target.'}
+                                </p>
+                                <div className="text-[10px] font-mono text-neutral-600 pt-0.5 border-t border-neutral-200">
+                                  Chunks Authorized: <span className="font-bold text-black">{evt.details.authorized_chunks ?? evt.details.authorized_chunks_count ?? 0}</span> / {evt.details.total_tenant_chunks ?? 0} Total Chunks
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-0.5">
+                                {evt.details.reason && (
+                                  <div className="text-[11px] text-neutral-700 font-sans">
+                                    {evt.details.reason}
+                                  </div>
+                                )}
+                                {evt.details.authorized_chunks !== undefined && (
+                                  <div className="text-[10px] text-neutral-600 font-mono">
+                                    Passed Pre-LLM Filter: <span className="font-bold text-black">{evt.details.authorized_chunks}</span> / {evt.details.total_tenant_chunks} chunks
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {evt.action === 'DOCUMENT_UPLOAD_AND_INDEXED' && evt.details.filename && (
+                              <div className="text-[11px] text-black">
+                                Ingested: <span className="font-bold">{evt.details.filename}</span> ({evt.details.chunk_count || 0} chunks)
+                              </div>
+                            )}
+
+                            {evt.action === 'ROLE_REASSIGNED' && (
+                              <div className="text-[11px] text-black">
+                                Reassigned <span className="font-bold">{evt.details.target_employee || evt.details.employee_email}</span> to <span className="font-bold">{evt.details.new_role}</span>
+                              </div>
+                            )}
+                          </div>
                         ) : '-'}
                       </td>
                     </tr>
