@@ -197,7 +197,7 @@ export default function DemoPage() {
             onClick={() => handleLaunchPersona(user.user_id, endpoint)}
             className="w-full btn-waxy-black py-2.5 px-3 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2"
           >
-            <span>{user.is_admin ? 'Launch Admin Chat' : 'Launch Role Chat'}</span>
+            <span>Sign in as {user.role_name}</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
           </button>
 
