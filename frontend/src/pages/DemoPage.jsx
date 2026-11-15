@@ -218,28 +218,30 @@ export default function DemoPage() {
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 text-neutral-100">
       
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 border border-neutral-700 bg-black font-mono text-[10px] uppercase tracking-widest text-neutral-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
-              <span>LIVE SECURITY TEST ENVIRONMENT</span>
+      {/* Header (Only on /demo main page) */}
+      {selectedTenantFilter === 'ALL' && (
+        <div className="space-y-4">
+          <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 border border-neutral-700 bg-black font-mono text-[10px] uppercase tracking-widest text-neutral-300">
+                <ShieldCheck className="w-3.5 h-3.5 text-white" />
+                <span>LIVE SECURITY TEST ENVIRONMENT</span>
+              </div>
+              <div className="font-mono text-xs text-neutral-400 border border-neutral-800 px-3 py-1 bg-black">
+                FAIL-CLOSED STATUS: <span className="text-white font-bold">ENFORCED</span>
+              </div>
             </div>
-            <div className="font-mono text-xs text-neutral-400 border border-neutral-800 px-3 py-1 bg-black">
-              FAIL-CLOSED STATUS: <span className="text-white font-bold">ENFORCED</span>
-            </div>
-          </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black uppercase text-white tracking-tight">
-            Interactive Multi-Role Security Demo
-          </h1>
-          <p className="text-sm text-neutral-400 font-mono max-w-3xl leading-relaxed">
-            Test whether the actual data is truly secure. Switch between 8 employee personas across 2 separate companies.
-            Ask allowed queries to verify instant retrieval, then intentionally attempt forbidden cross-department or cross-company queries to observe the pre-LLM retrieval gate physically prune unauthorized context.
-          </p>
+            <h1 className="text-3xl sm:text-5xl font-black uppercase text-white tracking-tight">
+              Interactive Multi-Role Security Demo
+            </h1>
+            <p className="text-sm text-neutral-400 font-mono max-w-3xl leading-relaxed">
+              Test whether the actual data is truly secure. Switch between 8 employee personas across 2 separate companies.
+              Ask allowed queries to verify instant retrieval, then intentionally attempt forbidden cross-department or cross-company queries to observe the pre-LLM retrieval gate physically prune unauthorized context.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 2-Company Selection Grid (Displayed at /demo) */}
       {selectedTenantFilter === 'ALL' && (
