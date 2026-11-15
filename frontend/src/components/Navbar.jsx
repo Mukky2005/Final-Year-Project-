@@ -1,9 +1,8 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useRouter, getUserSlug } from '../context/RouterContext';
+import { useRouter } from '../context/RouterContext';
 import { 
   Building2, 
-  MessageSquare, 
   SlidersHorizontal, 
   History, 
   LogOut, 
@@ -68,47 +67,31 @@ export default function Navbar({ activeTab }) {
               <span>DEMO LAB</span>
             </button>
 
-            {isAuthenticated && (
+            {isAuthenticated && currentUser?.is_admin && (
               <>
                 <button
-                  onClick={() => navigate(currentUser ? `/chat/${getUserSlug(currentUser)}` : '/chat')}
+                  onClick={() => navigate('/admin')}
                   className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all text-block-pop ${
-                    activeTab === 'chat'
+                    activeTab === 'admin'
                       ? 'bg-black text-white border-2 border-black font-bold shadow-sm'
                       : 'bg-white text-black border-2 border-transparent hover:border-black font-semibold'
                   }`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>ROLE CHAT</span>
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                  <span>ADMIN WORKSPACE</span>
                 </button>
 
-                {currentUser?.is_admin && (
-                  <>
-                    <button
-                      onClick={() => navigate('/admin')}
-                      className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all text-block-pop ${
-                        activeTab === 'admin'
-                          ? 'bg-black text-white border-2 border-black font-bold shadow-sm'
-                          : 'bg-white text-black border-2 border-transparent hover:border-black font-semibold'
-                      }`}
-                    >
-                      <SlidersHorizontal className="w-3.5 h-3.5" />
-                      <span>ADMIN WORKSPACE</span>
-                    </button>
-
-                    <button
-                      onClick={() => navigate('/audit')}
-                      className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all text-block-pop ${
-                        activeTab === 'audit'
-                          ? 'bg-black text-white border-2 border-black font-bold shadow-sm'
-                          : 'bg-white text-black border-2 border-transparent hover:border-black font-semibold'
-                      }`}
-                    >
-                      <History className="w-3.5 h-3.5" />
-                      <span>AUDIT LOGS</span>
-                    </button>
-                  </>
-                )}
+                <button
+                  onClick={() => navigate('/audit')}
+                  className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-none transition-all text-block-pop ${
+                    activeTab === 'audit'
+                      ? 'bg-black text-white border-2 border-black font-bold shadow-sm'
+                      : 'bg-white text-black border-2 border-transparent hover:border-black font-semibold'
+                  }`}
+                >
+                  <History className="w-3.5 h-3.5" />
+                  <span>AUDIT LOGS</span>
+                </button>
               </>
             )}
           </nav>
@@ -131,14 +114,6 @@ export default function Navbar({ activeTab }) {
                     className="px-4 py-2 bg-white text-black text-xs font-mono font-bold uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-block-pop"
                   >
                     Product Overview
-                  </button>
-                )}
-                {isAuthenticated && (
-                  <button
-                    onClick={() => navigate(currentUser ? `/chat/${getUserSlug(currentUser)}` : '/chat')}
-                    className="px-4 py-2 bg-white text-black text-xs font-mono font-bold uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-block-pop"
-                  >
-                    Open Chat
                   </button>
                 )}
               </div>
