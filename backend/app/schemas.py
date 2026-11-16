@@ -119,6 +119,7 @@ class ChatQueryResponse(BaseModel):
     user_role: str
     tenant_name: str
     is_grounded: bool
+    denial_reason: Optional[str] = None
 
 class MessageResponse(BaseModel):
     message_id: str

@@ -154,7 +154,8 @@ def query_knowledge(
         total_tenant_chunks_count=total_tenant_chunks,
         user_role=role_name,
         tenant_name=tenant_name,
-        is_grounded=is_grounded
+        is_grounded=is_grounded,
+        denial_reason=denial_reason if not authorized_chunks else None
     )
 
 @router.get("/conversations", response_model=List[ConversationResponse])

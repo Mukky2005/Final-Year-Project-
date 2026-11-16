@@ -65,7 +65,8 @@ def list_documents(
 
 @router.post("/upload", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
 async def upload_document(
-    file: UploadFile = File(...),
+    file: Optional[UploadFile] = File(None),
+    content_text: Optional[str] = Form(None),
     title: str = Form(...),
     allowed_role_ids: Optional[str] = Form(None),  # JSON string or comma-separated
     is_all_employees: bool = Form(False),
@@ -74,33 +75,52 @@ async def upload_document(
 ):
     """
     Upload once, assign access by role (PRD 6.1, FR-07, FR-08).
-    Extracts text, chunks it, generates vectors via Ollama, and indexes into pgvector.
+    Extracts text from uploaded file or raw text, chunks it, generates vectors via Ollama, and indexes into pgvector.
     """
-    # Validate extension
-    allowed_exts = ["txt", "pdf", "docx", "md"]
-    ext = file.filename.split(".")[-1].lower() if "." in file.filename else ""
-    if ext not in allowed_exts:
+    import re
+    
+    if not file and not (content_text and content_text.strip()):
         raise HTTPException(
             status_code=400,
-            detail=f"Unsupported file format '{ext}'. Supported formats: {', '.join(allowed_exts)}"
+            detail="Please provide a document file (.txt, .pdf, .docx, .md) or paste document content text."
         )
 
+    filename = "document.txt"
+    content = b""
+
+    if file:
+        allowed_exts = ["txt", "pdf", "docx", "md"]
+        ext = file.filename.split(".")[-1].lower() if "." in file.filename else ""
+        if ext not in allowed_exts:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported file format '{ext}'. Supported formats: {', '.join(allowed_exts)}"
+            )
+        content = await file.read()
+        filename = file.filename
+    else:
+        # User pasted direct text
+        clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower()).strip('_') or "pasted_document"
+        filename = f"{clean_name}.txt"
+        content = content_text.strip().encode("utf-8")
+
     # Read content & validate size (max 20MB)
-    content = await file.read()
     if len(content) > 20 * 1024 * 1024:
-        raise HTTPException(status_code=400, detail="File size exceeds maximum limit of 20MB.")
+        raise HTTPException(status_code=400, detail="Document content exceeds maximum limit of 20MB.")
     if len(content) == 0:
-        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+        raise HTTPException(status_code=400, detail="Document content is empty.")
 
     # Parse allowed_role_ids
     parsed_role_ids = []
     if not is_all_employees and allowed_role_ids:
         try:
-            # Try JSON array first
-            parsed_role_ids = json.loads(allowed_role_ids)
+            val = json.loads(allowed_role_ids)
+            if isinstance(val, list):
+                parsed_role_ids = [str(r).strip() for r in val if str(r).strip()]
+            elif isinstance(val, str):
+                parsed_role_ids = [val.strip()]
         except Exception:
-            # Fallback to comma separated
-            parsed_role_ids = [r.strip() for r in allowed_role_ids.split(",") if r.strip()]
+            parsed_role_ids = [r.strip() for r in str(allowed_role_ids).split(",") if r.strip()]
 
     if not is_all_employees and not parsed_role_ids:
         raise HTTPException(
@@ -113,7 +133,7 @@ async def upload_document(
             db=db,
             admin_user=admin,
             title=title.strip(),
-            filename=file.filename,
+            filename=filename,
             file_bytes=content,
             allowed_role_ids=parsed_role_ids,
             is_all_employees=is_all_employees

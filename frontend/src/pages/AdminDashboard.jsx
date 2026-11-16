@@ -15,7 +15,10 @@ import {
   FileCheck,
   Search,
   Sparkles,
-  ArrowLeft
+  ArrowLeft,
+  FileText,
+  Lock,
+  ShieldAlert
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -30,11 +33,15 @@ export default function AdminDashboard() {
 
   // Upload modal state
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadMode, setUploadMode] = useState('file'); // 'file' or 'text'
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadFile, setUploadFile] = useState(null);
+  const [uploadText, setUploadText] = useState('');
+  const [roleAccessMode, setRoleAccessMode] = useState('specific'); // 'specific' or 'all'
+  const [selectedRoleId, setSelectedRoleId] = useState('');
   const [selectedRoleIds, setSelectedRoleIds] = useState([]);
-  const [isAllEmployees, setIsAllEmployees] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [ingestSuccess, setIngestSuccess] = useState(null);
 
   // New role state
   const [newRoleName, setNewRoleName] = useState('');
@@ -67,8 +74,13 @@ export default function AdminDashboard() {
       setDocuments(dData);
       setEmployees(eData);
       setRoles(rData);
-      if (rData.length > 0 && !newEmpRoleId) {
-        setNewEmpRoleId(rData[0].role_id);
+      if (rData.length > 0) {
+        if (!newEmpRoleId) setNewEmpRoleId(rData[0].role_id);
+        if (!selectedRoleId) {
+          const nonAdmin = rData.find((r) => !r.is_admin) || rData[0];
+          setSelectedRoleId(nonAdmin.role_id);
+          setSelectedRoleIds([nonAdmin.role_id]);
+        }
       }
     } catch (err) {
       setError(err.message);
@@ -83,27 +95,53 @@ export default function AdminDashboard() {
 
   const handleUploadSubmit = async (e) => {
     e.preventDefault();
-    if (!uploadFile || !uploadTitle.trim()) return;
-
-    if (!isAllEmployees && selectedRoleIds.length === 0) {
-      alert('Please select at least one employee role or check "All tenant employees".');
+    if (!uploadTitle.trim()) {
+      alert('Please enter a document title.');
+      return;
+    }
+    if (uploadMode === 'file' && !uploadFile) {
+      alert('Please select a file (.txt, .pdf, .docx, .md).');
+      return;
+    }
+    if (uploadMode === 'text' && !uploadText.trim()) {
+      alert('Please enter or paste document text.');
       return;
     }
 
+    const isAll = roleAccessMode === 'all';
+    let targetRoleIds = [];
+    if (!isAll) {
+      targetRoleIds = selectedRoleIds.length > 0 ? selectedRoleIds : (selectedRoleId ? [selectedRoleId] : []);
+      if (targetRoleIds.length === 0) {
+        alert('Please choose the specific role authorized to access this document.');
+        return;
+      }
+    }
+
     setUploading(true);
+    setIngestSuccess(null);
     try {
       const formData = new FormData();
-      formData.append('file', uploadFile);
+      if (uploadMode === 'file' && uploadFile) {
+        formData.append('file', uploadFile);
+      } else {
+        formData.append('content_text', uploadText.trim());
+      }
       formData.append('title', uploadTitle.trim());
-      formData.append('is_all_employees', isAllEmployees);
-      formData.append('allowed_role_ids', JSON.stringify(selectedRoleIds));
+      formData.append('is_all_employees', isAll ? 'true' : 'false');
+      formData.append('allowed_role_ids', JSON.stringify(targetRoleIds));
 
-      await api.uploadDocument(formData);
+      const res = await api.uploadDocument(formData);
       setShowUploadModal(false);
       setUploadTitle('');
       setUploadFile(null);
-      setSelectedRoleIds([]);
-      setIsAllEmployees(false);
+      setUploadText('');
+      setIngestSuccess({
+        title: res.title,
+        chunkCount: res.chunk_count,
+        roles: res.allowed_roles?.join(', ') || 'Restricted Role',
+        roleId: targetRoleIds[0] || '',
+      });
       await loadData();
     } catch (err) {
       alert(`Upload failed: ${err.message}`);
@@ -256,13 +294,53 @@ export default function AdminDashboard() {
             </p>
           </div>
           <button
-            onClick={() => setShowUploadModal(true)}
+            onClick={() => {
+              setShowUploadModal(true);
+              setIngestSuccess(null);
+            }}
             className="btn-waxy-black inline-flex items-center gap-2 px-4 py-2.5 rounded-none font-mono font-bold text-xs uppercase tracking-wider"
           >
             <UploadCloud className="w-4 h-4" />
-            <span>Upload Document</span>
+            <span>Upload / Ingest Document</span>
           </button>
         </div>
+
+        {/* Ingestion & DB Storage Success Notification */}
+        {ingestSuccess && (
+          <div className="p-4 bg-neutral-50 border-2 border-black space-y-2 text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex items-center justify-between gap-2 border-b-2 border-black pb-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-black" />
+                <span className="font-mono font-black text-xs uppercase tracking-wider">
+                  Document Ingested, Chunked & Stored in Database
+                </span>
+              </div>
+              <button
+                onClick={() => setIngestSuccess(null)}
+                className="text-xs font-mono text-neutral-600 hover:text-black font-bold"
+              >
+                ✕ Dismiss
+              </button>
+            </div>
+            <p className="text-xs text-black font-sans leading-relaxed">
+              <strong>"{ingestSuccess.title}"</strong> was processed, divided into <strong>{ingestSuccess.chunkCount} vector chunk{ingestSuccess.chunkCount !== 1 ? 's' : ''}</strong>, and permanently indexed in pgvector. Access is restricted strictly to <strong>[{ingestSuccess.roles}]</strong>.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setTestSimulateRole(ingestSuccess.roleId);
+                  const el = document.getElementById('policy-simulator');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="btn-waxy-black px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Test Retrieval for {ingestSuccess.roles} in Simulator</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Documents Table */}
         <div className="overflow-x-auto">
@@ -515,7 +593,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Simulator Section */}
-      <div className="bg-white rounded-none p-6 sm:p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop space-y-5 font-mono">
+      <div id="policy-simulator" className="bg-white rounded-none p-6 sm:p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-block-pop space-y-5 font-mono">
         <div className="border-b-2 border-black pb-3">
           <h2 className="text-base font-black text-black uppercase tracking-wider flex items-center gap-2">
             <Search className="w-4 h-4 text-black" />
@@ -573,6 +651,19 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* Denial callout if 0 chunks passed */}
+            {testResult.authorized_chunks_count === 0 && (
+              <div className="p-4 border-2 border-black bg-white space-y-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 text-xs font-black text-black uppercase">
+                  <ShieldAlert className="w-4 h-4 text-black" />
+                  <span>Physical Pre-LLM Retrieval Boundary Enforced</span>
+                </div>
+                <p className="text-xs text-neutral-700 font-sans leading-relaxed font-medium">
+                  {testResult.denial_reason || 'Zero chunks authorized. The pgvector SQL pre-retrieval gate physically removed unauthorized documents before context construction.'}
+                </p>
+              </div>
+            )}
+
             <div className="space-y-1">
               <span className="text-xs font-black text-black uppercase tracking-wider">Grounded Answer:</span>
               <p className="text-xs sm:text-sm text-black bg-white p-4 border-2 border-black font-sans leading-relaxed font-medium">
@@ -601,20 +692,21 @@ export default function AdminDashboard() {
       {/* Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 font-mono">
-          <div className="bg-white border-2 border-black p-6 sm:p-8 max-w-lg w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6 rounded-none text-black">
+          <div className="bg-white border-2 border-black p-6 sm:p-8 max-w-xl w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-5 rounded-none text-black max-h-[90vh] overflow-y-auto">
             <div className="border-b-2 border-black pb-3">
-              <h3 className="text-base font-black text-black uppercase">Upload Source Document</h3>
+              <h3 className="text-base font-black text-black uppercase">Ingest Document & Assign Role Access</h3>
               <p className="text-xs text-neutral-600 mt-1 font-sans font-medium">
-                Supports PDF, DOCX, TXT. Role tags are enforced at the pgvector index level.
+                Documents are chunked, embedded via nomic-embed-text, and tagged in PostgreSQL pgvector. Access is enforced at the database query layer.
               </p>
             </div>
 
             <form onSubmit={handleUploadSubmit} className="space-y-4">
+              {/* Document Title */}
               <div>
                 <label className="block text-xs font-bold text-black uppercase mb-1">Document Title</label>
                 <input
                   type="text"
-                  placeholder="e.g. IT Security & Encryption Standard"
+                  placeholder="e.g. Engineering Microservices Architecture 2026"
                   value={uploadTitle}
                   onChange={(e) => setUploadTitle(e.target.value)}
                   required
@@ -622,64 +714,153 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Select File (.txt, .pdf, .docx)</label>
-                <input
-                  type="file"
-                  accept=".txt,.pdf,.docx,.md"
-                  onChange={(e) => setUploadFile(e.target.files[0])}
-                  required
-                  className="w-full text-xs text-black file:mr-3 file:py-2 file:px-4 file:rounded-none file:border-2 file:border-black file:text-xs file:font-mono file:bg-neutral-100 file:text-black file:font-bold"
-                />
+              {/* Mode Toggle: File vs Text */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-black uppercase">Ingestion Source</label>
+                <div className="flex border-2 border-black">
+                  <button
+                    type="button"
+                    onClick={() => setUploadMode('file')}
+                    className={`flex-1 py-2 text-xs font-bold uppercase transition-colors ${
+                      uploadMode === 'file' ? 'bg-black text-white' : 'bg-white text-black hover:bg-neutral-100'
+                    }`}
+                  >
+                    Upload File (.txt, .pdf, .docx, .md)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUploadMode('text')}
+                    className={`flex-1 py-2 text-xs font-bold uppercase border-l-2 border-black transition-colors ${
+                      uploadMode === 'text' ? 'bg-black text-white' : 'bg-white text-black hover:bg-neutral-100'
+                    }`}
+                  >
+                    Paste Text Directly
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t-2 border-black">
-                <label className="block text-xs font-bold text-black uppercase">Access Permissions</label>
-                
-                <label className="flex items-center gap-2 p-2.5 bg-neutral-50 border-2 border-black cursor-pointer text-block-pop">
+              {/* File Input */}
+              {uploadMode === 'file' ? (
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Select File</label>
                   <input
-                    type="checkbox"
-                    checked={isAllEmployees}
-                    onChange={(e) => {
-                      setIsAllEmployees(e.target.checked);
-                      if (e.target.checked) setSelectedRoleIds([]);
-                    }}
-                    className="w-4 h-4 rounded-none accent-black"
+                    type="file"
+                    accept=".txt,.pdf,.docx,.md"
+                    onChange={(e) => setUploadFile(e.target.files[0])}
+                    required={uploadMode === 'file'}
+                    className="w-full text-xs text-black file:mr-3 file:py-2 file:px-4 file:rounded-none file:border-2 file:border-black file:text-xs file:font-mono file:bg-neutral-100 file:text-black file:font-bold"
                   />
-                  <span className="text-xs font-bold text-black">
-                    All Tenant Employees (Company-Wide Policy)
-                  </span>
-                </label>
+                  {uploadFile && (
+                    <p className="text-[11px] text-neutral-600 mt-1 font-mono">
+                      Selected: <span className="font-bold text-black">{uploadFile.name}</span> ({(uploadFile.size / 1024).toFixed(1)} KB)
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Document Content</label>
+                  <textarea
+                    rows={6}
+                    placeholder="Paste full policy, guidelines, or technical document text here. It will be chunked and indexed automatically..."
+                    value={uploadText}
+                    onChange={(e) => setUploadText(e.target.value)}
+                    required={uploadMode === 'text'}
+                    className="w-full text-xs p-3 bg-white border-2 border-black text-black rounded-none outline-none focus:bg-neutral-50 font-mono resize-y"
+                  />
+                </div>
+              )}
 
-                {!isAllEmployees && (
-                  <div className="space-y-1.5 pt-1">
-                    <p className="text-[11px] text-neutral-600 font-bold">Select permitted roles:</p>
-                    <div className="space-y-1 max-h-36 overflow-y-auto">
+              {/* Role Access Scope */}
+              <div className="space-y-3 pt-2 border-t-2 border-black">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-black uppercase">Role Access Control</label>
+                  <span className="text-[10px] font-mono text-neutral-500 uppercase">Pre-LLM SQL Gate</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRoleAccessMode('specific');
+                      if (roles.length > 0 && !selectedRoleId) {
+                        const nonAdmin = roles.find((r) => !r.is_admin) || roles[0];
+                        setSelectedRoleId(nonAdmin.role_id);
+                        setSelectedRoleIds([nonAdmin.role_id]);
+                      }
+                    }}
+                    className={`p-3 text-left border-2 border-black transition-all ${
+                      roleAccessMode === 'specific'
+                        ? 'bg-black text-white font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                        : 'bg-white text-black hover:bg-neutral-50'
+                    }`}
+                  >
+                    <div className="text-xs font-black uppercase flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Specific Role Only</span>
+                    </div>
+                    <p className={`text-[11px] mt-1 ${roleAccessMode === 'specific' ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                      Isolated to one specific department role. All other roles are physically blocked.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRoleAccessMode('all');
+                      setSelectedRoleIds([]);
+                    }}
+                    className={`p-3 text-left border-2 border-black transition-all ${
+                      roleAccessMode === 'all'
+                        ? 'bg-black text-white font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                        : 'bg-white text-black hover:bg-neutral-50'
+                    }`}
+                  >
+                    <div className="text-xs font-black uppercase flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5" />
+                      <span>All Company Staff</span>
+                    </div>
+                    <p className={`text-[11px] mt-1 ${roleAccessMode === 'all' ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                      Company-wide standard readable by every employee in this workspace.
+                    </p>
+                  </button>
+                </div>
+
+                {/* Specific Role Dropdown */}
+                {roleAccessMode === 'specific' && (
+                  <div className="space-y-2 p-3 bg-neutral-50 border-2 border-black">
+                    <label className="block text-[11px] font-bold text-black uppercase">
+                      Choose Authorized Role:
+                    </label>
+                    <select
+                      value={selectedRoleId}
+                      onChange={(e) => {
+                        setSelectedRoleId(e.target.value);
+                        setSelectedRoleIds([e.target.value]);
+                      }}
+                      className="w-full text-xs px-3 py-2 bg-white border-2 border-black text-black rounded-none outline-none font-medium"
+                    >
                       {roles.map((r) => (
-                        <label
-                          key={r.role_id}
-                          className="flex items-center gap-2 p-2 bg-neutral-50 border border-black cursor-pointer text-xs text-block-pop"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedRoleIds.includes(r.role_id)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedRoleIds([...selectedRoleIds, r.role_id]);
-                              } else {
-                                setSelectedRoleIds(selectedRoleIds.filter((id) => id !== r.role_id));
-                              }
-                            }}
-                            className="w-3.5 h-3.5 rounded-none accent-black"
-                          />
-                          <span className="text-black font-medium">{r.role_name}</span>
-                        </label>
+                        <option key={r.role_id} value={r.role_id}>
+                          {r.role_name} {r.is_admin ? '(Administrator)' : ''}
+                        </option>
                       ))}
+                    </select>
+
+                    {/* Explanatory Boundary Box */}
+                    <div className="p-2.5 bg-white border border-black text-[11px] space-y-1">
+                      <div className="font-bold text-black flex items-center gap-1">
+                        <Lock className="w-3 h-3 text-black" />
+                        <span>Pre-LLM Retrieval Guarantee:</span>
+                      </div>
+                      <p className="text-neutral-700 font-sans leading-snug">
+                        ONLY employees authenticated as <strong>"{roles.find(r => r.role_id === selectedRoleId)?.role_name || 'Selected Role'}"</strong> will be able to retrieve chunks from this document. Any queries from other roles or foreign tenants will yield 0 chunks and be logged as denied.
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
 
+              {/* Submit Buttons */}
               <div className="pt-4 flex justify-end gap-2 border-t-2 border-black">
                 <button
                   type="button"
@@ -696,10 +877,10 @@ export default function AdminDashboard() {
                   {uploading ? (
                     <>
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Ingesting into pgvector...</span>
+                      <span>Chunking & Storing Vectors...</span>
                     </>
                   ) : (
-                    <span>Submit & Ingest</span>
+                    <span>Ingest & Store in Database</span>
                   )}
                 </button>
               </div>

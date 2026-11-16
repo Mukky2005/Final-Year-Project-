@@ -41,11 +41,11 @@ class LLMService:
             f"You are the Enterprise Knowledge Assistant for company '{tenant_name}'.\n"
             f"The authenticated employee's active role is: '{user_role_name}'.\n\n"
             "SECURITY & GROUNDING RULES:\n"
-            "1. You must answer the user's question solely and strictly using the AUTHORIZED EVIDENCE provided below.\n"
-            "2. If the authorized evidence does not provide enough factual information to answer the question, you MUST explicitly respond:\n"
-            "'I do not have sufficient information in your permitted knowledge scope to answer this question.'\n"
+            "1. Answer the user's question directly, accurately, and concisely using ONLY the facts stated in the AUTHORIZED EVIDENCE below.\n"
+            "2. Cite the source document (e.g. [Source 1: Document Name]) when stating facts.\n"
             "3. Do NOT make up information, guess, or extrapolate beyond the provided authorized documents.\n"
-            "4. Cite the source documents (e.g. [Source 1: Document Name]) when referencing specific rules or facts."
+            "4. ONLY if the provided authorized evidence does NOT contain any facts to answer the question, reply with:\n"
+            "'I do not have sufficient information in your permitted knowledge scope to answer this question.'"
         )
 
         user_prompt = (
