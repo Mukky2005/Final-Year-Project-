@@ -58,6 +58,7 @@ export default function AuditLogsPage() {
           >
             <option value="ALL">All Events</option>
             <option value="DENIED">Access Denied / Insufficient Scope</option>
+            <option value="PROMPT_INJECTION_BLOCKED">Prompt Injection Interceptions</option>
             <option value="KNOWLEDGE_QUERY">Knowledge Queries Only</option>
             <option value="DOCUMENT_UPLOAD_AND_INDEXED">Document Uploads</option>
             <option value="ROLE_REASSIGNED">Role Reassignments</option>
@@ -134,7 +135,23 @@ export default function AuditLogsPage() {
                               </div>
                             )}
 
-                            {isDenied ? (
+                            {evt.action === 'PROMPT_INJECTION_BLOCKED' ? (
+                              <div className="p-2.5 border-2 border-black bg-black text-white text-xs space-y-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                <div className="text-[10px] font-mono font-black uppercase text-white flex items-center gap-1.5">
+                                  <ShieldAlert className="w-3.5 h-3.5 text-white stroke-[2.5]" />
+                                  <span>PRE-RETRIEVAL GUARDRAIL INTERCEPTION</span>
+                                </div>
+                                <div className="text-xs font-bold text-neutral-200">
+                                  Category: <span className="text-white font-mono">{evt.details.category || 'INSTRUCTION_OVERRIDE'}</span>
+                                </div>
+                                <p className="font-sans font-medium text-neutral-300 leading-relaxed text-[11px]">
+                                  {evt.details.reason}
+                                </p>
+                                <div className="text-[10px] font-mono text-neutral-400 pt-0.5 border-t border-neutral-800">
+                                  Matched Pattern: <span className="font-bold text-white">"{evt.details.pattern}"</span> · Vector DB Query: <span className="font-bold text-white">Aborted (0 Chunks)</span>
+                                </div>
+                              </div>
+                            ) : isDenied ? (
                               <div className="p-2.5 border-2 border-black bg-neutral-50 text-black text-xs space-y-1 text-block-pop shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                 <div className="text-[10px] font-mono font-black uppercase text-black flex items-center gap-1.5">
                                   <ShieldAlert className="w-3.5 h-3.5 text-black stroke-[2.5]" />
@@ -159,6 +176,12 @@ export default function AuditLogsPage() {
                                     Passed Pre-LLM Filter: <span className="font-bold text-black">{evt.details.authorized_chunks}</span> / {evt.details.total_tenant_chunks} chunks
                                   </div>
                                 )}
+                              </div>
+                            )}
+
+                            {evt.details.pii_redacted_count > 0 && (
+                              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 border border-black bg-neutral-100 text-black text-[10px] font-bold">
+                                <span>🔒 Egress Sanitizer: {evt.details.pii_redacted_count} Sensitive Token(s) Redacted [{evt.details.pii_categories?.join(', ')}]</span>
                               </div>
                             )}
 

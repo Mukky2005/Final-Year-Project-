@@ -1,6 +1,6 @@
 import logging
 from sqlalchemy.orm import Session
-from app.database import SessionLocal, init_db
+from app.database import SessionLocal, init_db, set_tenant_context
 from app.models import Tenant, Role, User, Document, DocumentRoleAccess, DocumentChunk, Conversation, Message
 from app.auth import get_password_hash
 from app.services.chunker import TextChunker
@@ -17,6 +17,7 @@ def seed_database(db: Session = None, force_reseed: bool = False):
         close_at_end = True
 
     try:
+        set_tenant_context(db, 'SYSTEM_ADMIN')
         if force_reseed:
             logger.info("Force reseed requested. Cleaning existing records...")
             db.query(Message).delete()

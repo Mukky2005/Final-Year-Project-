@@ -83,9 +83,8 @@ class RetrievalService:
         for chunk, doc_title, distance in results:
             # Cosine similarity is 1.0 - distance
             similarity = max(0.0, 1.0 - float(distance)) if distance is not None else 0.0
-            # Filter out chunks that have virtually zero relevance (e.g. similarity < 0.25)
-            # unless it's a direct fallback
-            if similarity < 0.20 and len(results) > 1:
+            # Strict semantic gate: filter out low-similarity background noise (similarity < 0.55)
+            if similarity < 0.55:
                 continue
 
             authorized_chunks.append({
@@ -122,7 +121,10 @@ class RetrievalService:
         2. Cross-Tenant Physical Boundary (matching document exists in foreign tenant)
         3. General Insufficient Knowledge Scope (no relevant authorized documents)
         """
+        from app.database import set_tenant_context
         try:
+            # Grant temporary diagnostic context to evaluate cross-tenant/role match
+            set_tenant_context(db, 'SYSTEM_ADMIN')
             query_vector = embedding_service.get_embedding(query_text)
 
             # 1. Check if matching document exists within the same tenant but role is excluded
@@ -179,5 +181,7 @@ class RetrievalService:
         except Exception as e:
             logger.error(f"Error diagnosing denial reason: {e}")
             return f"Access Denied: Zero authorized chunks retrieved for role '{role_name}'. Pre-LLM filter enforced."
+        finally:
+            set_tenant_context(db, user.tenant_id)
 
 retrieval_service = RetrievalService()

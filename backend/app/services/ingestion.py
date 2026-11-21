@@ -1,11 +1,13 @@
 import logging
 from typing import List, Optional
 from sqlalchemy.orm import Session
+from app.database import set_tenant_context
 from app.models import Document, DocumentRoleAccess, DocumentChunk, Role, User
 from app.services.extractor import DocumentExtractor
 from app.services.chunker import TextChunker
 from app.services.embedding import embedding_service
 from app.services.audit import audit_service
+from app.services.sanitizer import sanitizer_service
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,7 @@ class IngestionService:
         - Atomic & fail-closed
         """
         tenant_id = admin_user.tenant_id
+        set_tenant_context(db, tenant_id)
         file_size = len(file_bytes)
         ext = filename.split(".")[-1].lower() if "." in filename else "txt"
 
@@ -84,13 +87,23 @@ class IngestionService:
             if not raw_chunks:
                 raise ValueError("No valid text chunks generated from extracted text.")
 
-            chunk_texts = [c[1] for c in raw_chunks]
+            # Apply Ingestion Sanitization (Section IV.C & IV.E)
+            sanitized_chunks = []
+            total_pii_redacted = 0
+            all_pii_categories = set()
+            for idx, text_chunk, src_ref in raw_chunks:
+                clean_chunk, pii_count, pii_cats = sanitizer_service.sanitize_text(text_chunk)
+                sanitized_chunks.append((idx, clean_chunk, src_ref))
+                total_pii_redacted += pii_count
+                all_pii_categories.update(pii_cats)
+
+            chunk_texts = [c[1] for c in sanitized_chunks]
 
             # 5. Embedding Generation
             vectors = embedding_service.get_embeddings(chunk_texts)
 
             # 6. Store Chunks in PostgreSQL with pgvector
-            for (idx, text_chunk, src_ref), vector in zip(raw_chunks, vectors):
+            for (idx, text_chunk, src_ref), vector in zip(sanitized_chunks, vectors):
                 chunk = DocumentChunk(
                     document_id=doc.document_id,
                     tenant_id=tenant_id,
@@ -121,7 +134,9 @@ class IngestionService:
                     "title": doc.title,
                     "chunks_count": len(raw_chunks),
                     "visibility_scope": visibility_scope,
-                    "allowed_role_ids": effective_role_ids
+                    "allowed_role_ids": effective_role_ids,
+                    "pii_redacted_count": total_pii_redacted,
+                    "pii_categories": list(all_pii_categories)
                 }
             )
             return doc
